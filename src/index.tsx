@@ -1,17 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { BaseWidget } from './CustomGrid/BaseWidget';
+import { GridHost } from './CustomGrid/GridHost';
+import { ResizeProvider } from './CustomGrid/UseResize';
+import { NumberWidget } from './Demo/NumberWidget';
+import { WeatherWidget } from './Demo/WeatherWidget';
+import "./RootStyles.scss";
+
+const root = document.getElementById('root');
+let widgets: BaseWidget[] = [new WeatherWidget()];
+
+for (let i = 0; i < 29; i++)
+{
+  widgets.push(new NumberWidget(i));
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <ResizeProvider element={root || document.createElement("div")} >
+    <GridHost
+      widgets={widgets}
+    />
+  </ResizeProvider>,
+  root
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
