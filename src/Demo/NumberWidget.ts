@@ -1,31 +1,27 @@
 import React from 'react';
 import { v4 } from 'uuid';
 import { BaseWidget } from '../CustomGrid/BaseWidget';
+import { WidgetType } from '../CustomGrid/Enums/WidgetType';
 import NumberWidgetRenderer from './NumberWidgetRenderer';
 
 export class NumberWidget extends BaseWidget
 {
-    public serialize(): string
-    {
-        throw new Error('Method not implemented.');
-    }
-    public deserialize(info: string)
-    {
-        throw new Error('Method not implemented.');
-    }
-    numb: number;   
+    public WidgetType: WidgetType = WidgetType.NumberWidget;
+    numb: number;
     /**
      *
      */
-    constructor(number:number) {
+    constructor()
+    {
         super();
-        this.numb = number
+        this.numb = Math.random();
     }
     public id: string = v4();
     public width: number = 1;
     public height: number = 1;
     public displayDragHandle = true;
     public contentDragable = false;
+    // public draggableIndicatorClassName = "bounce";
     public render(): JSX.Element
     {
         return React.createElement(NumberWidgetRenderer, { numb: this.numb });

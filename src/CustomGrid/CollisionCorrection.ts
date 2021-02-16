@@ -63,6 +63,8 @@ export class CollisionCorrection
                 // Space is free and can be occupied
                 this.fillSpace(item);
             }
+        }else{
+            console.warn("[CollisionCorrection] Stack size exceeded");
         }
     }
 
@@ -78,7 +80,7 @@ export class CollisionCorrection
                     this._fillInformation[item.x + width] = [];
                 }
 
-                if (item.x + width > this._tableDimensions.width)
+                if (item.x + width >= this._tableDimensions.width)
                 {
                     collissionTypes.push(SpaceCollissionType.Right);
                 }

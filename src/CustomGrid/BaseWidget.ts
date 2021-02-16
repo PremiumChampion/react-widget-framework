@@ -1,8 +1,16 @@
+import { WidgetType } from './Enums/WidgetType';
 import { IItemPositionInfo } from './Interfaces/IPositionInfo';
 
 export abstract class BaseWidget
 {
-
+    public abstract WidgetType: WidgetType;
+    /**
+     * a classname to apply to the widget when it is dragable
+     *
+     * @type {(string | undefined)}
+     * @memberof BaseWidget
+     */
+    public draggableIndicatorClassName: string = "";
     /**
      * FOR INTERNAL USE ONLY
      * keeps track of the saved widgets
@@ -69,7 +77,7 @@ export abstract class BaseWidget
      */
     public abstract height: number;
     /**
-     * indicates if the widget should be removeable and the ❌ should be shown
+     * indicates if the widget should be removeable and a remove button should be shown
      *
      * @type {boolean}
      * @memberof BaseWidget
@@ -111,6 +119,10 @@ export abstract class BaseWidget
      */
     public setPosition(position: IItemPositionInfo, currentColCount: number)
     {
+        if (!this.positionInfoTable[0])
+        {
+            this.positionInfoTable[0] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
+        }
         this.x = position.x;
         this.y = position.y;
         this.height = position.heigth;
@@ -138,7 +150,7 @@ export abstract class BaseWidget
                 return this.positionInfoTable[currentColCount];
             } else
             {
-                return { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
+                return this.positionInfoTable[0] || { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
             }
         }
     }
@@ -164,23 +176,30 @@ export abstract class BaseWidget
      */
     public getGridData()
     {
-        return { x: this.x, y: this.y, w: this.width, h: this.height, isResizable: this.isResizeable, static: !this.isDraggable, isDraggable: this.isDraggable, isBounded:true };
+        return { x: this.x, y: this.y, w: this.width, h: this.height, isResizable: this.isResizeable, static: !this.isDraggable, isDraggable: this.isDraggable, isBounded: true };
     }
 
     /**
      * function to serialise the widget
      *
-     * @abstract
      * @return {*}  {string}
      * @memberof BaseWidget
      */
-    public abstract serialize(): string;
+    public serialize(): string
+    {
+        return JSON.stringify(this);
+    }
     /**
      * function to deserialise the widget
      *
-     * @abstract
      * @param {string} serialisationInfo
      * @memberof BaseWidget
      */
-    public abstract deserialize(serialisationInfo: string): void;
+    public deserialize(info: string)
+    {
+        let serialisedOptions: Object = JSON.parse(info);
+        Object.keys(serialisedOptions).forEach(key=>{
+            this[key] = serialisedOptions[key];
+        })
+    }
 }

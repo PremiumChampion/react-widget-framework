@@ -11,10 +11,10 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
     };
 
     return (
-        <div className={`item`}>
+        <div className={["item", item.isDraggable ? item.draggableIndicatorClassName : ""].join(" ")}>
             <div className="item-content">
                 <div className="card">
-                    <div className={`IPI_CONTENT ${ item.contentDragable ? "IPI-DRAG" : "" }`}>
+                    <div className={`IPI_CONTENT ${ item.contentDragable ? "IPI-DRAG " : "" }`}>
                         {item.render()}
                     </div>
                     {item.allowDeletion &&

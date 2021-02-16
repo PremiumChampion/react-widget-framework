@@ -25,11 +25,9 @@ export default class NumberWidgetRenderer extends React.Component<NumberWidgetRe
     public render(): JSX.Element
     {
         return (
-            <div className="NumberWidget IPI-NODRAG" style={{ backgroundColor: `rgba(${ Math.random() * 255 }, ${ Math.random() * 255 }, ${ Math.random() * 255 }, ${ Math.random() * 255 })` }}>
-                {/* Test */}
+            <div className="NumberWidget IPI-NODRAG" style={{ backgroundColor: `rgb(53, 53, 53)`, color: 'white' }}>
                 <p>{this.props.numb}</p>
-                {/* <div><a href="https://www.meteoblue.com/en/weather/week/index?utm_source=weather_widget&utm_medium=linkus&utm_content=daily&utm_campaign=Weather%2BWidget" target="_blank">meteoblue</a></div> */}
-            </div>
+                </div>
         );
     }
 
