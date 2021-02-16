@@ -117,16 +117,23 @@ export abstract class BaseWidget
      * @param {number} currentColCount the current colunm width
      * @memberof BaseWidget
      */
-    public setPosition(position: IItemPositionInfo, currentColCount: number)
+    public setPosition(position: IItemPositionInfo, currentColCount: number, movedByUser: boolean)
     {
         if (!this.positionInfoTable[0])
         {
             this.positionInfoTable[0] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
         }
+
         this.x = position.x;
         this.y = position.y;
         this.height = position.heigth;
         this.width = position.width;
+
+        if(movedByUser){
+            this.positionInfoTable = {};
+            this.positionInfoTable[0] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
+        }
+        
         this.positionInfoTable[currentColCount] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
     }
     /**

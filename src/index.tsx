@@ -37,8 +37,6 @@ const render = () =>
       }} ></input>
       <input type={"button"} value="Load" onClick={() =>
       {
-        console.log("loading");
-
         if (!isNil(sessionStorage["IPI_Serialisation"]))
         {
           widgets = [];
@@ -50,6 +48,7 @@ const render = () =>
         }
         else
         {
+          alert("No save found");
           widgets = [];
           for (let i = 0; i < 30; i++)
           {
@@ -58,7 +57,16 @@ const render = () =>
         }
         render();
       }} ></input>
-    </div >,
+      <input type={"button"} value="New items" onClick={() =>
+      {
+        widgets = [];
+        for (let i = 0; i < 30; i++)
+        {
+          widgets.push(new NumberWidget());
+        }
+        render();
+      }}></input>
+    </div>,
     root
   );
 };

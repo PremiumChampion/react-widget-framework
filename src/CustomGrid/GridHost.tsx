@@ -130,7 +130,7 @@ export const GridHost = (props: IGirdHostProps) =>
             {
                 if (widget.hasPositionInfo(dimensions.width))
                 {
-                    widget.setPosition(widget.getWidgetPositionInfo(dimensions.width), dimensions.width);
+                    widget.setPosition(widget.getWidgetPositionInfo(dimensions.width), dimensions.width, false);
                     changes = true;
                 }
             });
@@ -149,7 +149,7 @@ export const GridHost = (props: IGirdHostProps) =>
 
             if (position !== null)
             {
-                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, id: widget.id }, dimensions.width);
+                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, id: widget.id }, dimensions.width, false);
                 changes = true;
             }
         });
@@ -162,7 +162,7 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         layout.forEach(itemPosition =>
         {
-            _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, id: itemPosition.i }, colCount);
+            _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, id: itemPosition.i }, colCount, true);
         });
     };
 
