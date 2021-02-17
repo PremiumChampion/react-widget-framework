@@ -25,10 +25,10 @@
         -moz-transform: rotate(0deg);
     }
     25%{
-        -moz-transform: rotate(-1deg);
+        -moz-transform: rotate(-0.5deg);
     }
     75%{
-        -moz-transform: rotate(1deg);
+        -moz-transform: rotate(0.5deg);
     }
 }
 @-webkit-keyframes spin {
@@ -38,10 +38,10 @@
         -webkit-transform: rotate(0deg);
     }
     25%{
-        -webkit-transform: rotate(-1deg);
+        -webkit-transform: rotate(-0.5deg);
     }
     75%{
-        -webkit-transform: rotate(1deg);
+        -webkit-transform: rotate(0.5deg);
     }
 }
 
@@ -53,11 +53,11 @@
         transform: rotate(0deg);
     }
     25%{
-        -webkit-transform: rotate(-1deg);
-        transform: rotate(-1deg);
+        -webkit-transform: rotate(-0.5deg);
+        transform: rotate(-0.5deg);
     }
     75%{
-        -webkit-transform: rotate(1deg);
-        transform: rotate(1deg);
+        -webkit-transform: rotate(0.5deg);
+        transform: rotate(0.5deg);
     }
 }

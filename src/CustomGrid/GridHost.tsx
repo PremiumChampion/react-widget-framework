@@ -1,11 +1,11 @@
 import { isNil } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import GridLayout from 'react-grid-layout';
+import { v4 } from 'uuid';
 import "./BaseStyle.scss";
 import { BaseWidget } from './BaseWidget';
 import { CollisionCorrection } from './CollisionCorrection';
 import { GridItemInternalRenderer } from './GridItemInternalRenderer';
-import { IBoundaryInfo } from './Interfaces/IBoundaryInfo';
 import { IGirdHostProps } from './Interfaces/IGirdHostProps';
 import { ISerialisationInfo } from './Serialization/ISerialisationInfo';
 import { ResizeContext } from './UseResize';
@@ -26,6 +26,7 @@ export const GridHost = (props: IGirdHostProps) =>
         let itemIndex: { [id: string]: BaseWidget; } = {};
 
         unindexedWidgets = horizontal ? getWidgetsHorizontal(unindexedWidgets) : getWidgetsVertical(unindexedWidgets);
+
         unindexedWidgets.forEach(unindexedWidget =>
         {
             itemIndex[unindexedWidget.id] = unindexedWidget;
@@ -37,6 +38,7 @@ export const GridHost = (props: IGirdHostProps) =>
     const getWidgetsHorizontal = (widgets?: BaseWidget[]) =>
     {
         if (!widgets) widgets = Object.values(_widgets);
+
         if (widgets.length > 0)
         {
             let mostRightElement: BaseWidget = widgets
@@ -55,7 +57,8 @@ export const GridHost = (props: IGirdHostProps) =>
 
                 return calculatePosition(a) - calculatePosition(b);
             });
-        } else
+        }
+        else
         {
             return [];
         }
@@ -64,6 +67,7 @@ export const GridHost = (props: IGirdHostProps) =>
     const getWidgetsVertical = (widgets?: BaseWidget[]) =>
     {
         if (!widgets) widgets = Object.values(_widgets);
+
         if (widgets.length > 0)
         {
             let mostBottomElement: BaseWidget = widgets
@@ -83,7 +87,8 @@ export const GridHost = (props: IGirdHostProps) =>
 
                 return calculatePosition(a) - calculatePosition(b);
             });
-        } else
+        }
+        else
         {
             return [];
         }
@@ -92,28 +97,32 @@ export const GridHost = (props: IGirdHostProps) =>
     // Apps and Widgets
     const [_widgets, _setWidgets] = useState(generateWidgetIndex(widgets));
     // Allow forced rerender
-    const [_update, _forceUpdate] = useState(true);
+    // const [_update, _forceUpdate] = useState(true);
     // Keeps tract of column size changes
     const [_prevColCount, _setPrevColCount] = useState(0);
     // Is initial render
     const [_initialRender, _setInitialRender] = useState(true);
     // is resizing
     const [_resizing, _setResizing] = useState(false);
+    // function to force an update
+    const [, _forceUpdate] = useReducer(x => x + 1, 0);
+    // contains the parents dimensions
+    const dimensions = useContext(ResizeContext);
 
     // creates the correct grid layout when the size chages or a widget collision occures
-    const createCorrectLayout = (dimensions: IBoundaryInfo, boundaryCollission: boolean, widgets?: BaseWidget[]) =>
+    const createCorrectLayout = (columnCount: number, boundaryCollission: boolean, widgets?: BaseWidget[]) =>
     {
         widgets = getWidgetsHorizontal(widgets);
 
-        let grid = new CollisionCorrection(dimensions);
+        let grid = new CollisionCorrection(columnCount);
         let changes = false;
         if (!boundaryCollission)
         {
             widgets.forEach(widget =>
             {
-                if (widget.hasPositionInfo(dimensions.width))
+                if (widget.hasPositionInfo(columnCount))
                 {
-                    widget.setPosition(widget.getWidgetPositionInfo(dimensions.width), dimensions.width);
+                    widget.setPosition(widget.getWidgetPositionInfo(columnCount), columnCount);
                     changes = true;
                 }
             });
@@ -121,7 +130,7 @@ export const GridHost = (props: IGirdHostProps) =>
         // add everything to the table
         widgets.forEach(widget =>
         {
-            grid.add(widget.getWidgetPositionInfo(dimensions.width));
+            grid.add(widget.getWidgetPositionInfo(columnCount));
         });
 
         grid.finalise();
@@ -132,23 +141,25 @@ export const GridHost = (props: IGirdHostProps) =>
 
             if (position !== null)
             {
-                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, userGenerated: false }, dimensions.width);
+                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, userGenerated: false }, columnCount);
                 changes = true;
             }
         });
         // force update
-        if (changes) _forceUpdate(!_update);
+        if (changes) _forceUpdate();
     };
 
     // set new widgets if props change
     useEffect(() =>
     {
+        // sets the first render with new widgets
         _setInitialRender(true);
         if (widgets)
         {
-            createCorrectLayout({ width: _prevColCount, heigth: 0 }, false, widgets);
+            createCorrectLayout(_prevColCount, false, widgets);
             _setWidgets(generateWidgetIndex(widgets));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [widgets]);
 
     // find the lagest widget width
@@ -158,33 +169,91 @@ export const GridHost = (props: IGirdHostProps) =>
         return max;
     };
 
-    
+
 
     // the layout was changed by the user
     const onLayoutChange = (colCount: number, layout: GridLayout.Layout[]) =>
     {
-        if(!_initialRender){
-
+        if (!_initialRender)
+        {
             layout.forEach(itemPosition =>
             {
                 _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, userGenerated: !_resizing }, colCount);
             });
-    
+
             if (props.onChange !== undefined)
             {
                 props.onChange(serialize);
             }
-    
+
             if (_resizing) _setResizing(false);
         }
-
     };
+
+    // serialize the grid
+    const serialize = () =>
+    {
+        return JSON.stringify(Object.values(_widgets).map(widget =>
+        {
+            widget.onBeforeSerilisation();
+            return (
+                { Type: widget.WidgetType, Serialisation: widget.serialize() } as ISerialisationInfo
+            );
+        }));
+    };
+
+    if (!isNil(props.useSerialisation))
+    {
+        props.useSerialisation(serialize);
+    }
+
+    // calculate the availabe columns
+    let colCount = Math.floor(dimensions.width / 100);
+
+    // ensure that the column count is greater or equal to the width of the widest widget
+    const minCols = dynamicMinWidth();
+
+    if (colCount < minCols)
+    {
+        colCount = minCols;
+    }
+
+    const resized = _prevColCount !== colCount;
+
+    // set new column count if resized
+    if (resized) _setPrevColCount(colCount);
+
+    // calculate the min container width
+    let minContainerWidth = colCount * 100;
+    let colWidth = Math.floor(dimensions.width / colCount);
+
+    if (minContainerWidth < colWidth) colWidth = minContainerWidth;
+
+    // calculate the row height
+    const rowHeigth = colWidth * 0.9;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const rowCount = Math.floor(dimensions.height / rowHeigth);
+
+    // determines if the Grid has boundary colisions
+    const gridHasBoundaryCollision = Object.values(_widgets).some(item => { return (item.x + item.width > colCount); });
+
+    if (_initialRender || gridHasBoundaryCollision || resized)
+    {
+        // create a new layout if it is the initial render or collisions are detected or the columnCount changes
+        createCorrectLayout(colCount, gridHasBoundaryCollision);
+    }
+
+    if (resized || dimensions.width === 0)
+    {
+        _setResizing(true);
+    }
 
     // renders the widgets
     const renderWidgets = () =>
     {
         return Object.values(_widgets).map((item) =>
         {
+            item._forceUpdate = _forceUpdate;
             return (
                 <div
                     data-grid={item.getGridData()}
@@ -196,100 +265,37 @@ export const GridHost = (props: IGirdHostProps) =>
                     />
                 </div>
             );
-        }
-        );
+        });
     };
 
-    // serialize the grid
-    const serialize = () =>
+    // Renders a item placeholder for the dropping zone
+    const renderPlaceholder = (layout: GridLayout.Layout[], oldItem: GridLayout.Layout, newItem: GridLayout.Layout, _placeholder: GridLayout.Layout, event: MouseEvent, element: HTMLElement) =>
     {
-        return JSON.stringify(Object.values(_widgets).map(widget => { return ({ Type: widget.WidgetType, Serialisation: widget.serialize() } as ISerialisationInfo); }));
+        let placeholder = document.querySelector(".react-grid-item.react-grid-placeholder");
+        if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".item")?.outerHTML + "");
     };
 
-    if (!isNil(props.useSerialisation))
-    {
-        props.useSerialisation(serialize);
-    }
+    const GridLayoutProps = {
+        cols: colCount,
+        rowHeight: rowHeigth,
+        width: dimensions.width,
+        isBounded: true,
+        draggableHandle: ".IPI-DRAG",
+        onLayoutChange: onLayoutChange.bind(undefined, colCount),
+        verticalCompact: true
+    };
+
+    // First render has finished
+    if (_initialRender) _setInitialRender(false);
 
     return (
-        <ResizeContext.Consumer>
-            {dimensions =>
-            {
-                // calculate the availabe columns
-                let colCount = Math.floor(dimensions.width / 100);
-                const minCols = dynamicMinWidth();
-
-                if (colCount < minCols)
-                {
-                    colCount = minCols;
-                }
-
-                if (_prevColCount !== colCount)
-                {
-                    _setPrevColCount(colCount);
-                }
-                // calculate the min container width
-                let minContainerWidth = colCount * 100;
-                let colWidth = Math.floor(dimensions.width / colCount);
-                if (minContainerWidth < colWidth) colWidth = minContainerWidth;
-
-
-                // calculate the row height
-                const rowHeigth = colWidth * 0.9;
-                const rowCount = Math.floor(dimensions.height / rowHeigth);
-
-
-                // determines if the Grid has boundary colisions
-                const gridHasBoundaryCollision = Object.values(_widgets).some(item => { return (item.x + item.width > colCount); });
-
-                const resized = _prevColCount !== colCount;
-
-                if (_initialRender || gridHasBoundaryCollision || resized)
-                {
-                    // create a new layout if it is the initial render or collisions are detected or the columnCount changes
-                    createCorrectLayout({ width: colCount, heigth: rowCount }, gridHasBoundaryCollision);
-                }
-
-                if (resized || dimensions.width == 0)
-                {
-                    _setResizing(true);
-                }
-
-
-                // First render has finished
-                if (_initialRender) _setInitialRender(false);
-
-                return (
-                    <div>
-                        {_update &&
-                            <GridLayout
-                                className="layout"
-                                cols={colCount}
-                                rowHeight={rowHeigth}
-                                width={dimensions.width}
-                                isBounded
-                                draggableHandle={".IPI-DRAG"}
-                                onLayoutChange={onLayoutChange.bind(undefined, colCount)}
-                            >
-                                {renderWidgets()}
-                            </GridLayout>
-                        }
-                        {!_update &&
-                            <GridLayout
-                                className="layout"
-                                cols={colCount}
-                                rowHeight={rowHeigth}
-                                width={dimensions.width}
-                                isBounded
-                                draggableHandle={".IPI-DRAG"}
-                                onLayoutChange={onLayoutChange.bind(undefined, colCount)}
-                            >
-                                {renderWidgets()}
-                            </GridLayout>
-                        }
-                    </div>
-                );
-            }}
-        </ResizeContext.Consumer>
+        <div key={v4()}>
+            <GridLayout
+                {...GridLayoutProps}
+                onDrag={renderPlaceholder}
+            >
+                {renderWidgets()}
+            </GridLayout>
+        </div>
     );
 };

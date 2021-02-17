@@ -6,21 +6,22 @@ import { isNil } from "lodash";
 export class CollisionCorrection
 {
     private _fillInformation: (string | null)[][];
-    private _tableDimensions: IBoundaryInfo;
+    private _tableColumns: number;
     private _isFinal = false;
     private _stackSize = 0;
     /**
      *
      */
-    constructor(dimensions: IBoundaryInfo)
+    constructor(colunmCont: number)
     {
-        this._tableDimensions = dimensions;
+        this._tableColumns = colunmCont;
         this._fillInformation = [];
     }
 
     public add(item: IItemPositionInfo, resetStackCounter = true)
     {
-        if(this._isFinal){
+        if (this._isFinal)
+        {
             throw new Error("[CollisionCorrection]: Can not add items on finalised instance.");
         }
         // check if the callstack is to large
@@ -60,11 +61,11 @@ export class CollisionCorrection
             }
             else
             {
-                debugger;
                 // Space is free and can be occupied
                 this.fillSpace(item);
             }
-        }else{
+        } else
+        {
             console.warn("[CollisionCorrection] Stack size exceeded");
         }
     }
@@ -81,7 +82,7 @@ export class CollisionCorrection
                     this._fillInformation[item.x + width] = [];
                 }
 
-                if (item.x + width >= this._tableDimensions.width)
+                if (item.x + width >= this._tableColumns)
                 {
                     collissionTypes.push(SpaceCollissionType.Right);
                 }
@@ -107,8 +108,6 @@ export class CollisionCorrection
                     this._fillInformation[item.x + width] = [];
                 }
                 this._fillInformation[item.x + width][item.y + height] = item.id;
-                console.log("Filled space");
-                
             }
         }
     }
@@ -125,7 +124,7 @@ export class CollisionCorrection
         }
 
         // get first position with id
-        for (let x = 0; x < this._tableDimensions.width; x++)
+        for (let x = 0; x < this._tableColumns; x++)
         {
             let y = 0;
 

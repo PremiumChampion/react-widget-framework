@@ -17,7 +17,7 @@
             right: 0;
             bottom: 0;
             background-color: rgba(255, 255, 255, 0.9);
-            border: 2px solid;
+            border: 0px solid;
             color: #333;
             border-radius: 26px;
             -webkit-transition: all 0.2s ease-out;
@@ -164,7 +164,7 @@
         visibility: hidden;
     }
     &.react-grid-placeholder {
-        background: rgb(53, 54, 54);
+        // background: rgb(53, 54, 54);
         opacity: 0.7;
         transition-duration: 100ms;
         z-index: 2;

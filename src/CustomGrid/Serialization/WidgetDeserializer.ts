@@ -18,6 +18,7 @@ class _WidgetDeserializer extends Serializer<BaseWidget>
     deserialize(SerialisationInfo: ISerialisationInfo){
         let widget = this._registered[SerialisationInfo.Type]();
         widget.deserialize(SerialisationInfo.Serialisation);
+        widget.onAfterDeserialisation();
         return widget;
     }
 }

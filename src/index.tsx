@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { BaseWidget } from './CustomGrid/BaseWidget';
 import { WidgetType } from './CustomGrid/Enums/WidgetType';
 import { GridHost } from './CustomGrid/GridHost';
-import { WidgetDeserializer } from './CustomGrid/Serialization/Deserializer';
+import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
 import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
 import { ResizeProvider } from './CustomGrid/UseResize';
 import { NumberWidget } from './Demo/NumberWidget';
@@ -30,12 +30,10 @@ const render = () =>
           useSerialisation={(fn) => serialise = fn}
           onRemoveWidget={(widget) =>
           {
-            console.log("Deleting");
             widgets = widgets.filter(_widget => widget.id !== _widget.id);
             render();
           }}
           onChange={(serialisationFn)=>{
-            // console.log("Changed");
           }}
         />
       </ResizeProvider>
@@ -68,13 +66,13 @@ const render = () =>
       }} ></input>
       <input type={"button"} value="New items" onClick={() =>
       {
-        widgets = [];
+        widgets = [new WeatherWidget()];
         for (let i = 0; i < 30; i++)
         {
           widgets.push(new NumberWidget());
         }
         render();
-      }}></input>
+      }} />
     </div>,
     root
   );

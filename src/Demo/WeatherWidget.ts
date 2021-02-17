@@ -10,7 +10,8 @@ export class WeatherWidget extends BaseWidget
     public id: string = v4();
     public width: number = 3;
     public height: number = 2;
-    public isDraggable = false;
+    public isDraggable = true;
+    // public 
     public render(): JSX.Element
     {
         return React.createElement(WeatherWidgetRenderer, {});
