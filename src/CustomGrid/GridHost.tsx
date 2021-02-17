@@ -268,11 +268,15 @@ export const GridHost = (props: IGirdHostProps) =>
         });
     };
 
+    var _previewSet = false;
     // Renders a item placeholder for the dropping zone
     const renderPlaceholder = (layout: GridLayout.Layout[], oldItem: GridLayout.Layout, newItem: GridLayout.Layout, _placeholder: GridLayout.Layout, event: MouseEvent, element: HTMLElement) =>
     {
-        let placeholder = document.querySelector(".react-grid-item.react-grid-placeholder");
-        if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".item")?.outerHTML + "");
+        if (!_previewSet)
+        {
+            let placeholder = document.querySelector(".react-grid-item.react-grid-placeholder");
+            if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".item")?.outerHTML + "");
+        }
     };
 
     const GridLayoutProps = {
