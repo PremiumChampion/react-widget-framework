@@ -4,5 +4,6 @@ export interface IGirdHostProps
 {
     widgets: BaseWidget[];
     useSerialisation?: (serialisationFunction: () => string) => void;
-    onChanged?: (serializedWidgets: string) => void;
+    onRemoveWidget?: (widget: BaseWidget) => void;
+    onChange?: (serialisationFunction: () => string)=> void;
 }

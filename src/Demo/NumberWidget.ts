@@ -14,16 +14,26 @@ export class NumberWidget extends BaseWidget
     constructor()
     {
         super();
-        this.numb = Math.random();
+        this.numb = Math.floor(Math.random() * 100);
     }
     public id: string = v4();
     public width: number = 1;
     public height: number = 1;
     public displayDragHandle = true;
     public contentDragable = false;
-    // public draggableIndicatorClassName = "bounce";
+    public draggableIndicatorClassName = "bounce";
     public render(): JSX.Element
     {
         return React.createElement(NumberWidgetRenderer, { numb: this.numb });
+    }
+
+    /**
+     * called before the webpart is removed
+     *
+     * @return {*} true if the webpart can be removed false if not
+     * @memberof NumberWidget
+     */
+    public beforeRemove(){
+        return true;
     }
 }

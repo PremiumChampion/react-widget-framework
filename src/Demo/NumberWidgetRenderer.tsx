@@ -27,7 +27,7 @@ export default class NumberWidgetRenderer extends React.Component<NumberWidgetRe
         return (
             <div className="NumberWidget IPI-NODRAG" style={{ backgroundColor: `rgb(53, 53, 53)`, color: 'white' }}>
                 <p>{this.props.numb}</p>
-                </div>
+            </div>
         );
     }
 

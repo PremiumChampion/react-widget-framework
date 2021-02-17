@@ -7,7 +7,7 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
 
     const onRemove = () =>
     {
-        item.onRemove();
+        if (props.onRemove !== undefined && item.beforeRemove()) props.onRemove(item);
     };
 
     return (

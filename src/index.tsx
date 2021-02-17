@@ -28,6 +28,15 @@ const render = () =>
         <GridHost
           widgets={widgets}
           useSerialisation={(fn) => serialise = fn}
+          onRemoveWidget={(widget) =>
+          {
+            console.log("Deleting");
+            widgets = widgets.filter(_widget => widget.id !== _widget.id);
+            render();
+          }}
+          onChange={(serialisationFn)=>{
+            console.log("Changed");
+          }}
         />
       </ResizeProvider>
       <input type={"button"} value="Save" onClick={() =>

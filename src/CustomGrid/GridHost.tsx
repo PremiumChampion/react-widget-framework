@@ -105,8 +105,8 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         if (widgets)
         {
+            createCorrectLayout({ width: _prevColCount, heigth: 0 }, false, widgets);
             _setWidgets(generateWidgetIndex(widgets));
-            createCorrectLayout({width: _prevColCount, heigth: 0},false);
         }
     }, [widgets]);
 
@@ -117,16 +117,16 @@ export const GridHost = (props: IGirdHostProps) =>
         return max;
     };
 
-
-
     // creates the correct grid layout when the size chages or a widget collision occures
-    const createCorrectLayout = (dimensions: IBoundaryInfo, boundaryCollission: boolean) =>
+    const createCorrectLayout = (dimensions: IBoundaryInfo, boundaryCollission: boolean, widgets?: BaseWidget[]) =>
     {
+        widgets = getWidgetsHorizontal(widgets);
+
         let grid = new CollisionCorrection(dimensions);
         let changes = false;
         if (!boundaryCollission)
         {
-            getWidgetsHorizontal().forEach(widget =>
+            widgets.forEach(widget =>
             {
                 if (widget.hasPositionInfo(dimensions.width))
                 {
@@ -136,14 +136,14 @@ export const GridHost = (props: IGirdHostProps) =>
             });
         }
         // add everything to the table
-        getWidgetsHorizontal().forEach(widget =>
+        widgets.forEach(widget =>
         {
             grid.add(widget.getWidgetPositionInfo(dimensions.width));
         });
 
         grid.finalise();
         // retrieve position of the table
-        getWidgetsHorizontal().forEach(widget =>
+        widgets.forEach(widget =>
         {
             let position = grid.getPosition(widget.id);
 
@@ -153,7 +153,7 @@ export const GridHost = (props: IGirdHostProps) =>
                 changes = true;
             }
         });
-        // set new 
+        // force update
         if (changes) _forceUpdate(!_update);
     };
 
@@ -164,6 +164,10 @@ export const GridHost = (props: IGirdHostProps) =>
         {
             _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, id: itemPosition.i }, colCount, true);
         });
+
+        if(props.onChange !== undefined){
+            props.onChange(serialize);
+        }
     };
 
     // renders the widgets
@@ -178,6 +182,7 @@ export const GridHost = (props: IGirdHostProps) =>
                 >
                     <GridItemInternalRenderer
                         item={item}
+                        onRemove={props.onRemoveWidget}
                     />
                 </div>
             );
@@ -195,8 +200,6 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         props.useSerialisation(serialize);
     }
-
-
 
     return (
         <ResizeContext.Consumer>
