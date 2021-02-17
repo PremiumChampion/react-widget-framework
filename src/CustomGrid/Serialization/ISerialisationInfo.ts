@@ -1,6 +1,6 @@
 import { WidgetType } from '../Enums/WidgetType';
 
 export interface ISerialisationInfo{
-    WidgetType: WidgetType;
+    Type: WidgetType;
     Serialisation: string;
 }

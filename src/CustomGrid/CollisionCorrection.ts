@@ -60,6 +60,7 @@ export class CollisionCorrection
             }
             else
             {
+                debugger;
                 // Space is free and can be occupied
                 this.fillSpace(item);
             }
@@ -106,6 +107,8 @@ export class CollisionCorrection
                     this._fillInformation[item.x + width] = [];
                 }
                 this._fillInformation[item.x + width][item.y + height] = item.id;
+                console.log("Filled space");
+                
             }
         }
     }

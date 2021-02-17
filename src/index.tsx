@@ -2,10 +2,10 @@ import { isNil } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BaseWidget } from './CustomGrid/BaseWidget';
-import { Deserializer } from './CustomGrid/Deserializer';
 import { WidgetType } from './CustomGrid/Enums/WidgetType';
 import { GridHost } from './CustomGrid/GridHost';
-import { ISerialisationInfo } from './CustomGrid/Interfaces/ISerialisationInfo';
+import { WidgetDeserializer } from './CustomGrid/Serialization/Deserializer';
+import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
 import { ResizeProvider } from './CustomGrid/UseResize';
 import { NumberWidget } from './Demo/NumberWidget';
 import { WeatherWidget } from './Demo/WeatherWidget';
@@ -13,8 +13,8 @@ import "./RootStyles.scss";
 
 const root = document.getElementById('root');
 
-Deserializer.registerWidget(WidgetType.NumberWidget, () => { return new NumberWidget(); });
-Deserializer.registerWidget(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
+WidgetDeserializer.register(WidgetType.NumberWidget, () => { return new NumberWidget(); });
+WidgetDeserializer.register(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
 
 let widgets: BaseWidget[] = [];
 let serialise = () => {};
@@ -35,7 +35,7 @@ const render = () =>
             render();
           }}
           onChange={(serialisationFn)=>{
-            console.log("Changed");
+            // console.log("Changed");
           }}
         />
       </ResizeProvider>
@@ -52,7 +52,7 @@ const render = () =>
           let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["IPI_Serialisation"]);
           WidgetSerialisations.forEach(WidgetSerialisation =>
           {
-            widgets.push(Deserializer.deserializeWidget(WidgetSerialisation));
+            widgets.push(WidgetDeserializer.deserialize(WidgetSerialisation));
           });
         }
         else

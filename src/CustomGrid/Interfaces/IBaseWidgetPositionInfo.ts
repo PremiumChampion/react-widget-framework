@@ -1,5 +1,5 @@
-import { IItemPositionInfo } from './IPositionInfo';
+import { IGridItemPositionInfo } from './IGridItemPositionInfo';
 
-export interface IBaseWidgetPositionInfo extends IItemPositionInfo {
+export interface IBaseWidgetPositionInfo extends IGridItemPositionInfo {
     userGenerated: boolean
 }

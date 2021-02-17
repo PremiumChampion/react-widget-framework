@@ -1,14 +1,14 @@
 import { isNil } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import GridLayout from 'react-grid-layout';
-import { BaseWidget } from './BaseWidget';
 import "./BaseStyle.scss";
+import { BaseWidget } from './BaseWidget';
 import { CollisionCorrection } from './CollisionCorrection';
 import { GridItemInternalRenderer } from './GridItemInternalRenderer';
 import { IBoundaryInfo } from './Interfaces/IBoundaryInfo';
 import { IGirdHostProps } from './Interfaces/IGirdHostProps';
+import { ISerialisationInfo } from './Serialization/ISerialisationInfo';
 import { ResizeContext } from './UseResize';
-import { ISerialisationInfo } from './Interfaces/ISerialisationInfo';
 
 /**
  *
@@ -97,25 +97,8 @@ export const GridHost = (props: IGirdHostProps) =>
     const [_prevColCount, _setPrevColCount] = useState(0);
     // Is initial render
     const [_initialRender, _setInitialRender] = useState(true);
-
-
-
-    // set new widgets if props change
-    useEffect(() =>
-    {
-        if (widgets)
-        {
-            createCorrectLayout({ width: _prevColCount, heigth: 0 }, false, widgets);
-            _setWidgets(generateWidgetIndex(widgets));
-        }
-    }, [widgets]);
-
-    // find the lagest widget width
-    const dynamicMinWidth = () =>
-    {
-        let max = Object.values(_widgets).map(widget => widget.width).sort((a, b) => b - a)[0] || 1;
-        return max;
-    };
+    // is resizing
+    const [_resizing, _setResizing] = useState(false);
 
     // creates the correct grid layout when the size chages or a widget collision occures
     const createCorrectLayout = (dimensions: IBoundaryInfo, boundaryCollission: boolean, widgets?: BaseWidget[]) =>
@@ -130,7 +113,7 @@ export const GridHost = (props: IGirdHostProps) =>
             {
                 if (widget.hasPositionInfo(dimensions.width))
                 {
-                    widget.setPosition(widget.getWidgetPositionInfo(dimensions.width), dimensions.width, false);
+                    widget.setPosition(widget.getWidgetPositionInfo(dimensions.width), dimensions.width);
                     changes = true;
                 }
             });
@@ -149,7 +132,7 @@ export const GridHost = (props: IGirdHostProps) =>
 
             if (position !== null)
             {
-                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, id: widget.id }, dimensions.width, false);
+                widget.setPosition({ ...position, heigth: widget.height, width: widget.width, userGenerated: false }, dimensions.width);
                 changes = true;
             }
         });
@@ -157,17 +140,44 @@ export const GridHost = (props: IGirdHostProps) =>
         if (changes) _forceUpdate(!_update);
     };
 
+    // set new widgets if props change
+    useEffect(() =>
+    {
+        _setInitialRender(true);
+        if (widgets)
+        {
+            createCorrectLayout({ width: _prevColCount, heigth: 0 }, false, widgets);
+            _setWidgets(generateWidgetIndex(widgets));
+        }
+    }, [widgets]);
+
+    // find the lagest widget width
+    const dynamicMinWidth = () =>
+    {
+        let max = Object.values(_widgets).map(widget => widget.width).sort((a, b) => b - a)[0] || 1;
+        return max;
+    };
+
+    
+
     // the layout was changed by the user
     const onLayoutChange = (colCount: number, layout: GridLayout.Layout[]) =>
     {
-        layout.forEach(itemPosition =>
-        {
-            _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, id: itemPosition.i }, colCount, true);
-        });
+        if(!_initialRender){
 
-        if(props.onChange !== undefined){
-            props.onChange(serialize);
+            layout.forEach(itemPosition =>
+            {
+                _widgets[itemPosition.i].setPosition({ x: itemPosition.x, y: itemPosition.y, width: itemPosition.w, heigth: itemPosition.h, userGenerated: !_resizing }, colCount);
+            });
+    
+            if (props.onChange !== undefined)
+            {
+                props.onChange(serialize);
+            }
+    
+            if (_resizing) _setResizing(false);
         }
+
     };
 
     // renders the widgets
@@ -193,7 +203,7 @@ export const GridHost = (props: IGirdHostProps) =>
     // serialize the grid
     const serialize = () =>
     {
-        return JSON.stringify(Object.values(_widgets).map(widget => { return ({ WidgetType: widget.WidgetType, Serialisation: widget.serialize() } as ISerialisationInfo); }));
+        return JSON.stringify(Object.values(_widgets).map(widget => { return ({ Type: widget.WidgetType, Serialisation: widget.serialize() } as ISerialisationInfo); }));
     };
 
     if (!isNil(props.useSerialisation))
@@ -232,12 +242,19 @@ export const GridHost = (props: IGirdHostProps) =>
                 // determines if the Grid has boundary colisions
                 const gridHasBoundaryCollision = Object.values(_widgets).some(item => { return (item.x + item.width > colCount); });
 
+                const resized = _prevColCount !== colCount;
 
-                if (_initialRender || gridHasBoundaryCollision || _prevColCount !== colCount)
+                if (_initialRender || gridHasBoundaryCollision || resized)
                 {
                     // create a new layout if it is the initial render or collisions are detected or the columnCount changes
                     createCorrectLayout({ width: colCount, heigth: rowCount }, gridHasBoundaryCollision);
                 }
+
+                if (resized || dimensions.width == 0)
+                {
+                    _setResizing(true);
+                }
+
 
                 // First render has finished
                 if (_initialRender) _setInitialRender(false);
@@ -251,9 +268,7 @@ export const GridHost = (props: IGirdHostProps) =>
                                 rowHeight={rowHeigth}
                                 width={dimensions.width}
                                 isBounded
-                                autoSize
                                 draggableHandle={".IPI-DRAG"}
-                                compactType={"horizontal"}
                                 onLayoutChange={onLayoutChange.bind(undefined, colCount)}
                             >
                                 {renderWidgets()}
@@ -267,7 +282,6 @@ export const GridHost = (props: IGirdHostProps) =>
                                 width={dimensions.width}
                                 isBounded
                                 draggableHandle={".IPI-DRAG"}
-                                compactType={"horizontal"}
                                 onLayoutChange={onLayoutChange.bind(undefined, colCount)}
                             >
                                 {renderWidgets()}

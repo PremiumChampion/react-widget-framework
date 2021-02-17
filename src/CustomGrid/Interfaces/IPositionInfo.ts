@@ -1,7 +1,6 @@
-import { IBoundaryInfo } from './IBoundaryInfo';
-import { IGridPositionInfo } from './IGridPositionInfo';
+import { IGridItemPositionInfo } from './IGridItemPositionInfo';
 
-export interface IItemPositionInfo extends IBoundaryInfo, IGridPositionInfo
+export interface IItemPositionInfo extends IGridItemPositionInfo
 {
     id: string;
 }

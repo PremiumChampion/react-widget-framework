@@ -1,8 +1,11 @@
+import { isNil } from 'lodash';
 import { WidgetType } from './Enums/WidgetType';
 import { IBaseWidgetPositionInfo } from './Interfaces/IBaseWidgetPositionInfo';
+import { IGridItemPositionInfo } from './Interfaces/IGridItemPositionInfo';
 import { IItemPositionInfo } from './Interfaces/IPositionInfo';
+import { ISerializable } from './Serialization/ISerializable';
 
-export abstract class BaseWidget
+export abstract class BaseWidget implements ISerializable
 {
     /**
      * the type of the widget
@@ -26,7 +29,7 @@ export abstract class BaseWidget
      * @type {{ [colCount: number]: IItemPositionInfo; }}
      * @memberof BaseWidget
      */
-    public positionInfoTable: { [colCount: number]: IBaseWidgetPositionInfo; } = {};
+    public positionInfoTable: { [colCount: number]: IGridItemPositionInfo; } = {};
     /**
      * the id of the widget
      *
@@ -119,11 +122,11 @@ export abstract class BaseWidget
      * @param {number} currentColCount the current colunm width
      * @memberof BaseWidget
      */
-    public setPosition(position: IItemPositionInfo, currentColCount: number, movedByUser: boolean)
+    public setPosition(position: IGridItemPositionInfo, currentColCount: number)
     {
         if (!this.positionInfoTable[0])
         {
-            this.positionInfoTable[0] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: false };
+            this.positionInfoTable[0] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: false };
         }
 
         this.x = position.x;
@@ -131,13 +134,7 @@ export abstract class BaseWidget
         this.height = position.heigth;
         this.width = position.width;
 
-        if (movedByUser)
-        {
-            this.positionInfoTable = {};
-            this.positionInfoTable[0] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: movedByUser };
-        }
-
-        this.positionInfoTable[currentColCount] = { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: movedByUser };
+        this.positionInfoTable[currentColCount] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: position.userGenerated };
     }
     /**
      * INTERNAL USE ONLY
@@ -149,18 +146,20 @@ export abstract class BaseWidget
      */
     public getWidgetPositionInfo(currentColCount?: number): IItemPositionInfo
     {
+        const defaultPosition = !isNil(this.positionInfoTable[0]) ? { ...this.positionInfoTable[0], id: this.id } : { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: false };
+        
         if (currentColCount === undefined)
         {
             // default widget position
-            return this.positionInfoTable[0] || { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
+            return defaultPosition;
         } else
         {
             if (this.hasPositionInfo(currentColCount))
             {
-                return this.positionInfoTable[currentColCount];
+                return { ...this.positionInfoTable[currentColCount], id: this.id };
             } else
             {
-                return this.positionInfoTable[0] || { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y };
+                return defaultPosition;
             }
         }
     }
