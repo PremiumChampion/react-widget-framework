@@ -7,14 +7,18 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
 
     const onRemove = () =>
     {
-        if (props.onRemove !== undefined && item.onRemove()) props.onRemove(item);
+        if (props.onRemove !== undefined)
+        {
+            item.onRemove();
+            props.onRemove(item);
+        }
     };
 
     return (
-        <div className={["item", item.isDraggable ? item.draggableIndicatorClassName : ""].join(" ")}>
+        <div className={["item", item.isDraggable ? item.draggableIndicatorClassName : "", "TS_PREVIEW"].join(" ")}>
             <div className="item-content">
                 <div className="card">
-                    <div className={`JSPREVIEW IPI_CONTENT ${ item.contentDragable ? "IPI-DRAG " : "" }`}>
+                    <div className={`IPI_CONTENT ${ item.contentDragable ? "IPI-DRAG " : "" }`}>
                         {item.render()}
                     </div>
                     {item.allowDeletion &&

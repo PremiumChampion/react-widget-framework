@@ -19,6 +19,7 @@ export class NumberWidget extends BaseWidget
     public displayDragHandle = true;
     public contentDragable = true;
     public draggableIndicatorClassName = "bounce";
+    allowDeletion = true
     public render(): JSX.Element
     {
         return React.createElement(NumberWidgetRenderer, { numb: this.numb });

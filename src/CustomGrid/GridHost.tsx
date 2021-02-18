@@ -105,7 +105,7 @@ export const GridHost = (props: IGirdHostProps) =>
     // is resizing
     const [_resizing, _setResizing] = useState(false);
     // function to force an update
-    const [, _forceUpdate] = useReducer(x => x + 1, 0);
+    const [_updateVersion, _forceUpdate] = useReducer(x => x + 1, 0);
     // contains the parents dimensions
     const dimensions = useContext(ResizeContext);
 
@@ -254,6 +254,10 @@ export const GridHost = (props: IGirdHostProps) =>
         return Object.values(_widgets).map((item) =>
         {
             item._forceUpdate = _forceUpdate;
+            // const onRemove = () =>
+            // {
+            //     if (props.onRemoveWidget) (item);
+            // };
             return (
                 <div
                     data-grid={item.getGridData()}
@@ -275,7 +279,7 @@ export const GridHost = (props: IGirdHostProps) =>
         if (!_previewSet)
         {
             let placeholder = document.querySelector(".react-grid-item.react-grid-placeholder");
-            if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".item")?.outerHTML + "");
+            if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".TS_PREVIEW")?.outerHTML + "");
         }
     };
 
@@ -286,17 +290,18 @@ export const GridHost = (props: IGirdHostProps) =>
         isBounded: true,
         draggableHandle: ".IPI-DRAG",
         onLayoutChange: onLayoutChange.bind(undefined, colCount),
-        verticalCompact: true
+        verticalCompact: true,
+        onDrag: renderPlaceholder
     };
 
     // First render has finished
     if (_initialRender) _setInitialRender(false);
 
     return (
-        <div key={v4()}>
+        <div key={_updateVersion}>
             <GridLayout
                 {...GridLayoutProps}
-                onDrag={renderPlaceholder}
+                compactType="horizontal"
             >
                 {renderWidgets()}
             </GridLayout>
