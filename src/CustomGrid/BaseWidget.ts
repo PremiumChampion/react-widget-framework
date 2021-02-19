@@ -285,6 +285,17 @@ export abstract class BaseWidget implements ISerializable
         {
             notificationBubbleText = "9+";
         }
+
+        if (this.notificationCount > 15)
+        {
+            notificationBubbleText = "15+";
+        }
+
+        if (this.notificationCount > 20)
+        {
+            notificationBubbleText = "20+";
+        }
+
         if (this.notificationCount > 25)
         {
             notificationBubbleText = "25+";

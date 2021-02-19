@@ -1,4 +1,4 @@
-import { Icon, PrimaryButton } from '@fluentui/react';
+import { Icon, DefaultButton } from '@fluentui/react';
 import { Callout, DirectionalHint } from 'office-ui-fabric-react';
 import React from "react";
 import { WidgetType } from '../../CustomGrid/Enums/WidgetType';
@@ -36,7 +36,6 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
         return (
             <div
                 className="Settings_Add_Icon"
-                // id={this.iconId}
                 onClick={() =>
                 {
                     this.setState({ calloutOpen: true });
@@ -54,24 +53,31 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                         <div className={"SettingsHost"}>
                             <div className={"WidgetSelection"}>
                                 <div key={"ContactInfo"} className={"SettingsEntity"}>
-                                    <Icon style={{ fontSize: "40px" }} iconName={"ContactInfo"} onClick={() =>
+                                    <Icon style={{ fontSize: "40px" }} iconName={"QuickNote"} onClick={() =>
                                     {
-                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.KontaktWidget);
+                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.NotesWidget);
                                     }} />
-                                    <p>Kontakt-Widget</p>
+                                    <p>Notizen</p>
                                 </div>
                                 <div key={"CloudWeather"} className={"SettingsEntity"}>
                                     <Icon style={{ fontSize: "40px" }} iconName={"CloudWeather"} onClick={() =>
                                     {
                                         Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.WeatherWidget);
                                     }} />
-                                    <p>Wetter-Widget</p>
+                                    <p>Wetter</p>
+                                </div>
+                                <div key={"Link"} className={"SettingsEntity"}>
+                                    <Icon style={{ fontSize: "40px" }} iconName={"Link12"} onClick={() =>
+                                    {
+                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.LinkWidget);
+                                    }} />
+                                    <p>Link</p>
                                 </div>
                             </div>
                             <div className={"SaveOptions"}>
-                                <PrimaryButton onClick={() => { Custom_Event.fire("IPI_SAVE_WIDGETS", undefined); }}>Widgets speichern</PrimaryButton>
-                                <PrimaryButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", true); }}>Widgets laden</PrimaryButton>
-                                <PrimaryButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", false); }}>Neue Widgets generieren</PrimaryButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_SAVE_WIDGETS", undefined); }}>Widgets speichern</DefaultButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", true); }}>Widgets laden</DefaultButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", false); }}>Alle Widgets löschen</DefaultButton>
                             </div>
                         </div>
                     </Callout>

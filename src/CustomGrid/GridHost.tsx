@@ -283,6 +283,7 @@ export const GridHost = (props: IGirdHostProps) =>
     };
 
     var _previewSet = false;
+
     // Renders a item placeholder for the dropping zone
     const renderPlaceholder = (layout: GridLayout.Layout[], oldItem: GridLayout.Layout, newItem: GridLayout.Layout, _placeholder: GridLayout.Layout, event: MouseEvent, element: HTMLElement) =>
     {
@@ -304,7 +305,7 @@ export const GridHost = (props: IGirdHostProps) =>
         verticalCompact: true,
         onDrag: renderPlaceholder,
         compactType: "horizontal",
-        margin: [gridMarginValue, gridMarginValue]
+        margin: [gridMarginValue, gridMarginValue],
     };
 
     // First render has finished

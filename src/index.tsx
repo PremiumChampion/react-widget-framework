@@ -8,8 +8,9 @@ import { GridHost } from './CustomGrid/GridHost';
 import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
 import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
 import { ResizeProvider } from './CustomGrid/UseResize';
-import { ContactsWidget } from './Demo/ContactsWidget/ContactsWidget';
+import { NotesWidget } from './Demo/ContactsWidget/NotesWidget';
 import { Custom_Event } from './Demo/CustomEvents';
+import { LinkWidget } from './Demo/LinkWidget/LinkWidget';
 import { SettingsWidget } from './Demo/SettingsWidget/SettingsWidget';
 import { WeatherWidget } from './Demo/WeatherWidget/WeatherWidget';
 import "./RootStyles.scss";
@@ -18,9 +19,10 @@ initializeIcons();
 
 const root = document.getElementById('root');
 
-WidgetDeserializer.register(WidgetType.KontaktWidget, () => { return new ContactsWidget(); });
+WidgetDeserializer.register(WidgetType.NotesWidget, () => { return new NotesWidget(); });
 WidgetDeserializer.register(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
 WidgetDeserializer.register(WidgetType.SettingsWidget, () => { return new SettingsWidget(); });
+WidgetDeserializer.register(WidgetType.LinkWidget, () => { return new LinkWidget(); });
 
 let widgets: BaseWidget[] = [];
 let serialise = () => {};
@@ -63,7 +65,7 @@ const loadItems = (tryUseCache: boolean = true) =>
   else
   {
     widgets = [];
-    
+
     widgets.push(new SettingsWidget());
   }
   render();
@@ -77,14 +79,17 @@ const onAddNewWidget = (Type: WidgetType) =>
 
   switch (Type)
   {
-    case WidgetType.KontaktWidget:
-      widget = new ContactsWidget();
+    case WidgetType.NotesWidget:
+      widget = new NotesWidget();
       break;
     case WidgetType.WeatherWidget:
       widget = new WeatherWidget();
       break;
     case WidgetType.SettingsWidget:
       widget = new SettingsWidget();
+      break;
+    case WidgetType.LinkWidget:
+      widget = new LinkWidget();
       break;
     default:
       break;

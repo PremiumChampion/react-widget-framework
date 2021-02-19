@@ -1,5 +1,6 @@
 export enum WidgetType{
-    KontaktWidget,
+    NotesWidget,
     WeatherWidget,
-    SettingsWidget
+    SettingsWidget,
+    LinkWidget
 }

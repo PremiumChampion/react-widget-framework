@@ -1,0 +1,51 @@
+.Link_Icon {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    // background-image: url(https://i.pinimg.com/originals/3e/d8/fc/3ed8fc5f95d96fa06a5407f402efb015.png);
+    // background-repeat: no-repeat;
+    // background-size: contain;
+}
+.LinkEntity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 3px;
+}
+.LinkHost {
+    width: 300px;
+    padding: 10px;
+
+    > *:first-child {
+        > *:last-child {
+            display: flex;
+            margin-top: 5px;
+            margin-left: auto;
+            background-color: #99ff01;
+        }
+        > *:first-child {
+            margin-top: 0;
+        }
+        > * {
+            margin-top: 5px;
+        }
+    }
+    [data-icon-name] {
+        color: black;
+    }
+}
+.DisplayLink a {
+    // font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    svg {
+        width: 100%;
+      }
+}
