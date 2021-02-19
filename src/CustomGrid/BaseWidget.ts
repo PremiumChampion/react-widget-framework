@@ -276,4 +276,33 @@ export abstract class BaseWidget implements ISerializable
         }
         return result;
     }
+
+    public generateNotificationBubbleText = () =>
+    {
+        let notificationBubbleText = this.notificationCount + "";
+
+        if (this.notificationCount > 9)
+        {
+            notificationBubbleText = "9+";
+        }
+        if (this.notificationCount > 25)
+        {
+            notificationBubbleText = "25+";
+        }
+
+        if (this.notificationCount > 50)
+        {
+            notificationBubbleText = "50+";
+        }
+        if (this.notificationCount > 100)
+        {
+            notificationBubbleText = "100+";
+        }
+        if (this.notificationCount > 999)
+        {
+            notificationBubbleText = "999+";
+        }
+
+        return notificationBubbleText;
+    };
 }

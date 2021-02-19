@@ -3,9 +3,7 @@ import { Callout, DirectionalHint } from 'office-ui-fabric-react';
 import React from "react";
 import { WidgetType } from '../../CustomGrid/Enums/WidgetType';
 import { Custom_Event } from './../CustomEvents';
-import { random } from "lodash";
 import "./SettingsWidget.scss";
-import { BaseWidget } from '../../CustomGrid/BaseWidget';
 
 export interface SettingsWidgetRendererProps
 {
@@ -69,13 +67,6 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                                     }} />
                                     <p>Wetter-Widget</p>
                                 </div>
-                                {/* <div key={"Settings"} className={"SettingsEntity"}>
-                                    <Icon style={{ fontSize: "40px" }} iconName={"Settings"} onClick={() =>
-                                    {
-                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.SettingsWidget);
-                                    }} />
-                                    <p>Settings-Widget</p>
-                                </div> */}
                             </div>
                             <div className={"SaveOptions"}>
                                 <PrimaryButton onClick={() => { Custom_Event.fire("IPI_SAVE_WIDGETS", undefined); }}>Widgets speichern</PrimaryButton>

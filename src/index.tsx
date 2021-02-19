@@ -1,18 +1,18 @@
 import { isNil } from 'lodash';
+import { initializeIcons } from 'office-ui-fabric-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BaseWidget } from './CustomGrid/BaseWidget';
 import { WidgetType } from './CustomGrid/Enums/WidgetType';
 import { GridHost } from './CustomGrid/GridHost';
-import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
 import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
+import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
 import { ResizeProvider } from './CustomGrid/UseResize';
 import { ContactsWidget } from './Demo/ContactsWidget/ContactsWidget';
+import { Custom_Event } from './Demo/CustomEvents';
+import { SettingsWidget } from './Demo/SettingsWidget/SettingsWidget';
 import { WeatherWidget } from './Demo/WeatherWidget/WeatherWidget';
 import "./RootStyles.scss";
-import { Custom_Event } from './Demo/CustomEvents';
-import { PrimaryButton, initializeIcons } from 'office-ui-fabric-react';
-import { SettingsWidget } from './Demo/SettingsWidget/SettingsWidget';
 
 initializeIcons();
 

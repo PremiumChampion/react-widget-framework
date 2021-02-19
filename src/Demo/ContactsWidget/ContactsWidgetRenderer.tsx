@@ -1,7 +1,6 @@
 import { Callout, DefaultButton, DirectionalHint, Icon, Text, TextField } from '@fluentui/react';
 import React from "react";
 import { v4 } from 'uuid';
-import { BaseWidget } from '../../CustomGrid/BaseWidget';
 import "./ContactsWidgetStyles.scss";
 export interface ContactsWidgetRendererProps
 {
@@ -58,7 +57,8 @@ export default class ContactsWidgetRenderer extends React.Component<ContactsWidg
                                 <TextField value={this.state.contactName} onChange={(_, text) => { this.setState({ contactName: text || "" }); }} />
                                 <DefaultButton onClick={() =>
                                 {
-                                    this.props.addContact(this.state.contactName); this.setState({ contactName: "" });
+                                    this.props.addContact(this.state.contactName);
+                                    this.setState({ contactName: "" });
                                 }}>Kontakt speichern</DefaultButton>
                             </div>
                             {

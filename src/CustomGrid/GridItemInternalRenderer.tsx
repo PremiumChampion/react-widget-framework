@@ -1,9 +1,8 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer } from "react";
 import { IGridItemInternalProps } from './Interfaces/IGridItemInternalProps';
 
 export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
 {
-    const [_notificationBubbleText, _setNotificationBubbleText] = useState("");
     const [_updateVersion, _forceUpdate] = useReducer(x => x + 1, 0);
 
     const onRemove = () =>
@@ -17,41 +16,12 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
 
     props.item.componentUpdate = _forceUpdate;
 
-    const generateNotificationBubbleText = () =>
-    {
-        let text = props.item.notificationCount + "";
-        
-        if (props.item.notificationCount > 9)
-        {
-            text = "9+";
-        }
-        if (props.item.notificationCount > 25)
-        {
-            text = "25+";
-        }
-
-        if (props.item.notificationCount > 50)
-        {
-            text = "50+";
-        }
-        if (props.item.notificationCount > 100)
-        {
-            text = "100+";
-        }
-        if (props.item.notificationCount > 999)
-        {
-            text = "999+";
-        }
-
-        return text;
-    };
-
 
     return (
-        <div key={_updateVersion + ""} className={["item", props.item.isDraggable ? props.item.draggableIndicatorClassName : "", "TS_PREVIEW"].join(" ")}>
+        <div className={["item", props.item.isDraggable ? props.item.draggableIndicatorClassName : "", "TS_PREVIEW"].join(" ")}>
             <div className="item-content">
                 <div className="card">
-                    <div className={`IPI_CONTENT ${ props.item.contentDragable ? "IPI-DRAG " : "" }`} id={props.item.id}>
+                    <div className={`IPI_CONTENT ${ (props.item.contentDragable && props.item.isDraggable) ? "IPI-DRAG " : "" }`} id={props.item.id}>
                         {props.item.render()}
                     </div>
                     {props.item.allowDeletion &&
@@ -70,7 +40,7 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
                 {props.item.notificationCount > 0 &&
                     <div className="IPI-NOTIFICATION_BUBBLE">
                         <div>
-                            <p>{generateNotificationBubbleText()}</p>
+                            <p>{props.item.generateNotificationBubbleText()} </p>
                         </div>
                     </div>
                 }
