@@ -104,7 +104,7 @@ export const GridHost = (props: IGirdHostProps) =>
     // function to force an update
     const [_updateVersion, _forceUpdate] = useReducer(x => x + 1, 0);
     // contains the parents dimensions
-    const dimensions = useContext(ResizeContext);
+    const {width} = useContext(ResizeContext);
 
     // creates the correct grid layout when the size chages or a widget collision occures
     const createCorrectLayout = (columnCount: number, boundaryCollission: boolean, widgets?: BaseWidget[], lastItemId?: string) =>
@@ -215,7 +215,7 @@ export const GridHost = (props: IGirdHostProps) =>
     const minWidgetWidth = 108;
 
     // calculate the availabe columns
-    let colCount = Math.floor(dimensions.width / minWidgetWidth);
+    let colCount = Math.floor(width / minWidgetWidth);
 
     // ensure that the column count is greater or equal to the width of the widest widget
     const minCols = dynamicMinWidth();
@@ -231,7 +231,7 @@ export const GridHost = (props: IGirdHostProps) =>
     if (resized) _setPrevColCount(colCount);
     // calculate the min container width
     let minParentContainerWidth = colCount * minWidgetWidth;
-    let colWidth = Math.floor(dimensions.width / colCount);
+    let colWidth = Math.floor(width / colCount);
 
     if (minParentContainerWidth < colWidth) colWidth = minParentContainerWidth;
 
@@ -240,8 +240,6 @@ export const GridHost = (props: IGirdHostProps) =>
     // calculate the row height
     const rowHeigth = colWidth * ((minWidgetWidth - gridMarginValue) / minWidgetWidth);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const rowCount = Math.floor(dimensions.height / rowHeigth);
 
     // determines if the Grid has boundary colisions
     const gridHasBoundaryCollision = Object.values(_widgets).some(item => { return (item.x + item.width > colCount); });
@@ -252,7 +250,7 @@ export const GridHost = (props: IGirdHostProps) =>
         createCorrectLayout(colCount, gridHasBoundaryCollision);
     }
 
-    if (resized || dimensions.width === 0)
+    if (resized || width === 0)
     {
         _setResizing(true);
     }
@@ -262,7 +260,7 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         return Object.values(_widgets).map((item) =>
         {
-            item._forceGridUpdate = () =>
+            item.forceGridUpdate = () =>
             {
                 _forceUpdate();
             };
@@ -298,7 +296,7 @@ export const GridHost = (props: IGirdHostProps) =>
     const GridLayoutProps: ReactGridLayoutProps = {
         cols: colCount,
         rowHeight: rowHeigth,
-        width: dimensions.width,
+        width: width,
         isBounded: true,
         draggableHandle: ".IPI-DRAG",
         onLayoutChange: onLayoutChange.bind(undefined, colCount),

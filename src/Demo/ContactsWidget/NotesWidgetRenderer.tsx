@@ -42,6 +42,10 @@ export default class NotesWidgetRenderer extends React.Component<NotesWidgetRend
                 {
                     this.setState({ calloutOpen: true });
                 }}
+                onTouchStartCapture={() =>
+                    {
+                        this.setState({ calloutOpen: true });
+                    }}
             >
                 {this.state.calloutOpen &&
                     <Callout
@@ -52,6 +56,7 @@ export default class NotesWidgetRenderer extends React.Component<NotesWidgetRend
                             if (this.state.contactName.trim().length > 0) this.props.addNote(this.state.contactName);
                             this.setState({ calloutOpen: false, contactName: "" });
                         }}
+                        preventDismissOnResize={true}
                     >
                         <div className={"NotesHost"}>
                             <div>

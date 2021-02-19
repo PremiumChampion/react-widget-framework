@@ -40,6 +40,10 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                 {
                     this.setState({ calloutOpen: true });
                 }}
+                onTouchStartCapture={() =>
+                {
+                    this.setState({ calloutOpen: true });
+                }}
             >
                 {this.state.calloutOpen &&
                     <Callout
@@ -49,35 +53,36 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                         {
                             this.setState({ calloutOpen: false });
                         }}
+                        preventDismissOnResize={true}
                     >
                         <div className={"SettingsHost"}>
                             <div className={"WidgetSelection"}>
                                 <div key={"ContactInfo"} className={"SettingsEntity"}>
                                     <Icon style={{ fontSize: "40px" }} iconName={"QuickNote"} onClick={() =>
                                     {
-                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.NotesWidget);
+                                        Custom_Event.fire("ADD_WIDGET", WidgetType.NotesWidget);
                                     }} />
                                     <p>Notizen</p>
                                 </div>
                                 <div key={"CloudWeather"} className={"SettingsEntity"}>
                                     <Icon style={{ fontSize: "40px" }} iconName={"CloudWeather"} onClick={() =>
                                     {
-                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.WeatherWidget);
+                                        Custom_Event.fire("ADD_WIDGET", WidgetType.WeatherWidget);
                                     }} />
                                     <p>Wetter</p>
                                 </div>
                                 <div key={"Link"} className={"SettingsEntity"}>
                                     <Icon style={{ fontSize: "40px" }} iconName={"Link12"} onClick={() =>
                                     {
-                                        Custom_Event.fire("IPI_ADD_WIDGET", WidgetType.LinkWidget);
+                                        Custom_Event.fire("ADD_WIDGET", WidgetType.LinkWidget);
                                     }} />
                                     <p>Link</p>
                                 </div>
                             </div>
                             <div className={"SaveOptions"}>
-                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_SAVE_WIDGETS", undefined); }}>Widgets speichern</DefaultButton>
-                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", true); }}>Widgets laden</DefaultButton>
-                                <DefaultButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", false); }}>Alle Widgets löschen</DefaultButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("SAVE_WIDGETS", undefined); }}>Widgets speichern</DefaultButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("LOAD_WIDGETS", true); }}>Widgets laden</DefaultButton>
+                                <DefaultButton onClick={() => { Custom_Event.fire("LOAD_WIDGETS", false); }}>Alle Widgets löschen</DefaultButton>
                             </div>
                         </div>
                     </Callout>

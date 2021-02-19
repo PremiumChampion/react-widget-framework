@@ -7,7 +7,7 @@ import "../Spin.scss";
 
 export class LinkWidget extends BaseWidget
 {
-    public WidgetType: WidgetType = WidgetType.NotesWidget;
+    public WidgetType: WidgetType = WidgetType.LinkWidget;
     public link: {
         title: string;
         link: string;
@@ -21,11 +21,14 @@ export class LinkWidget extends BaseWidget
     public isResizeable = false;
     public render(): JSX.Element
     {
+        if(this.link){
+            this.notificationCount = 0;
+        }
         const props: LinkWidgetRendererProps = {
             setLink: (link) =>
             {
                 this.link = link;
-                this.componentUpdate();
+                this.forceWidgetUpdate();
             },
             id: this.id,
             link: this.link
@@ -36,4 +39,8 @@ export class LinkWidget extends BaseWidget
             />
         );
     }
+    public generateNotificationBubbleText(){
+        return "•";
+    }
+    public notificationCount = 1;
 }

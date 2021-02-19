@@ -14,7 +14,7 @@ export const GridItemInternalRenderer = (props: IGridItemInternalProps) =>
         }
     };
 
-    props.item.componentUpdate = _forceUpdate;
+    props.item.forceWidgetUpdate = _forceUpdate;
 
 
     return (

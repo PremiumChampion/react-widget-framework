@@ -44,21 +44,25 @@ export default class LinkWidgetRenderer extends React.Component<LinkWidgetRender
                 {
                     this.setState({ calloutOpen: true });
                 }}
+                onTouchStartCapture={() =>
+                {
+                    this.setState({ calloutOpen: true });
+                }}
             >
                 {!this.props.link && <Icon iconName={"Link12"} />}
                 {this.state.calloutOpen && this.props.link === undefined &&
                     <Callout
+                        preventDismissOnResize={true}
                         target={`#${ this.props.id }`}
                         directionalHint={DirectionalHint.rightCenter}
                         onDismiss={() =>
                         {
-                            // if (this.state.contactName.trim().length > 0) this.props.setLink();
                             this.setState({ calloutOpen: false });
                         }}
                     >
                         <div className={"LinkHost"}>
                             <div>
-                                <TextField value={this.state.LinkIcon} onChange={(_, text) => { this.setState({ LinkIcon: text || "Link" }); }} placeholder={"Fluent-UI-Icon-Name"} />
+                                <TextField value={this.state.LinkIcon} onChange={(_, text) => { this.setState({ LinkIcon: text || "" }); }} placeholder={"Fluent-UI-Icon-Name"} />
                                 <TextField value={this.state.LinkTitle} onChange={(_, text) => { this.setState({ LinkTitle: text || "" }); }} placeholder={"Linkbezeichnung"} />
                                 <TextField value={this.state.LinkTaget} onChange={(_, text) => { this.setState({ LinkTaget: text || "" }); }} placeholder={"Ziel z.B. https://google.com"} />
                                 <ActionButton

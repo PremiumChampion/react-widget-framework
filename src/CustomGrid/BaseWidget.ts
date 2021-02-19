@@ -6,7 +6,14 @@ import { ISerializable } from './Serialization/ISerializable';
 
 export abstract class BaseWidget implements ISerializable
 {
+    /**
+     * The ammount of notifications to display in the notification badge.
+     *
+     * @type {number}
+     * @memberof BaseWidget
+     */
     public notificationCount: number = 0;
+
     /**
      * the type of the widget
      *
@@ -15,6 +22,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public abstract WidgetType: WidgetType;
+
     /**
      * a classname to apply to the widget when it is dragable
      *
@@ -22,6 +30,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public draggableIndicatorClassName: string = "";
+
     /**
      * FOR INTERNAL USE ONLY
      * keeps track of the saved widgets
@@ -30,6 +39,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public positionInfoTable: { [colCount: number]: IGridItemPositionInfo; } = {};
+
     /**
      * the id of the widget
      *
@@ -38,6 +48,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public id: string = BaseWidget.generateHTMLId();
+
     /**
      * indicates if the widget is dragable
      * default: TRUE
@@ -46,6 +57,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public isDraggable: boolean = true;
+
     /**
      * indicates if the widger is resizeable
      * default: TRUE
@@ -54,6 +66,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public isResizeable: boolean = true;
+
     /**
      * indicates if a drag handle should be displayed
      * default: false
@@ -62,6 +75,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public displayDragHandle: boolean = false;
+
     /**
      * indicates if the widget content should be dragable
      * default: TRUE
@@ -69,6 +83,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public contentDragable = true;
+
     /**
      * the width of the widget
      * in grid colunms
@@ -78,6 +93,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public abstract width: number;
+
     /**
      * the heigth of the widget
      * in grid rows
@@ -87,6 +103,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public abstract height: number;
+
     /**
      * indicates if the widget should be removeable and a remove button should be shown
      *
@@ -94,18 +111,21 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public allowDeletion: boolean = true;
+
     /**
      * the x position of the widget on the grid
      *
      * @memberof BaseWidget
      */
     public x = 0;
+
     /**
      * the y position of the widget on the grid
      *
      * @memberof BaseWidget
      */
     public y = 0;
+
     /**
      * called to render the widget
      *
@@ -114,6 +134,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public abstract render(): JSX.Element;
+
     /**
      * INTERNAL USE ONLY
      * sets the position of the widget
@@ -136,6 +157,7 @@ export abstract class BaseWidget implements ISerializable
 
         this.positionInfoTable[currentColCount] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: position.userGenerated };
     }
+
     /**
      * INTERNAL USE ONLY
      * requests the widget position info for the element
@@ -163,6 +185,7 @@ export abstract class BaseWidget implements ISerializable
             }
         }
     }
+
     /**
      * FOR INTERNAL USE ONLY
      * requests if the current column has a layout value
@@ -226,16 +249,24 @@ export abstract class BaseWidget implements ISerializable
     }
 
     /**
-     * call this method to force the parent to rerender update
+     * call this method to force the grid to rerender the items if the position was changed programmatically
      *
      * @memberof BaseWidget
      */
-    public _forceGridUpdate()
+    public forceGridUpdate()
     {
 
     }
 
-    public componentUpdate() {}
+    /**
+     * function to call when the component should update
+     *
+     * @memberof BaseWidget
+     */
+    public forceWidgetUpdate()
+    {
+
+    }
 
     /**
      * Method called after the widget is deserialised. Start loading any dynamic content here.
@@ -246,6 +277,7 @@ export abstract class BaseWidget implements ISerializable
     {
 
     }
+
     /**
      * Method called before the widget is serialised. It removes the user generated widget positions by default.
      *
@@ -263,21 +295,14 @@ export abstract class BaseWidget implements ISerializable
             };
         });
     }
-    
 
-    public static generateHTMLId()
-    {
-        var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var charactersLength = characters.length;
-        for (var i = 0; i < 30; i++)
-        {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
-    }
-
-    public generateNotificationBubbleText = () =>
+    /**
+     * Generates the text to show in the notification bubble can be overridden by the user
+     *
+     * @return {*} 
+     * @memberof BaseWidget
+     */
+    public generateNotificationBubbleText()
     {
         let notificationBubbleText = this.notificationCount + "";
 
@@ -316,4 +341,25 @@ export abstract class BaseWidget implements ISerializable
 
         return notificationBubbleText;
     };
+
+    /**
+     * generated a html-save id
+     *
+     * @static
+     * @return {*} the html-save id
+     * @memberof BaseWidget
+     */
+    public static generateHTMLId(length = 30)
+    {
+        var result = 'ID_';
+
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+
+        for (var i = 0; i < length; i++)
+        {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 }

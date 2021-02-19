@@ -53,10 +53,10 @@ const render = () =>
 
 const loadItems = (tryUseCache: boolean = true) =>
 {
-  if (!isNil(sessionStorage["IPI_Serialisation"]) && tryUseCache)
+  if (!isNil(sessionStorage["WIDGET_SERILIZATION"]) && tryUseCache)
   {
     widgets = [];
-    let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["IPI_Serialisation"]);
+    let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["WIDGET_SERILIZATION"]);
     WidgetSerialisations.forEach(WidgetSerialisation =>
     {
       widgets.push(WidgetDeserializer.deserialize(WidgetSerialisation));
@@ -102,6 +102,6 @@ const onAddNewWidget = (Type: WidgetType) =>
   }
 };
 
-Custom_Event.addEventListener("IPI_ADD_WIDGET", onAddNewWidget);
-Custom_Event.addEventListener("IPI_SAVE_WIDGETS", () => sessionStorage["IPI_Serialisation"] = serialise());
-Custom_Event.addEventListener("IPI_LOAD_WIDGETS", loadItems);
+Custom_Event.addEventListener("ADD_WIDGET", onAddNewWidget);
+Custom_Event.addEventListener("SAVE_WIDGETS", () => sessionStorage["WIDGET_SERILIZATION"] = serialise());
+Custom_Event.addEventListener("LOAD_WIDGETS", loadItems);

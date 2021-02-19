@@ -23,13 +23,13 @@ export class NotesWidget extends BaseWidget
             {
                 this.notes.push(note);
                 this.notificationCount = this.notes.length;
-                this.componentUpdate();
+                this.forceWidgetUpdate();
             },
             removeNote: (index: number) =>
             {
                 this.notes.splice(index, 1);
                 this.notificationCount = this.notes.length;
-                this.componentUpdate();
+                this.forceWidgetUpdate();
             },
             id: this.id,
             notes: this.notes
