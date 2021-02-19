@@ -6,6 +6,7 @@ import { ISerializable } from './Serialization/ISerializable';
 
 export abstract class BaseWidget implements ISerializable
 {
+    public notificationCount: number = 0;
     /**
      * the type of the widget
      *
@@ -36,7 +37,7 @@ export abstract class BaseWidget implements ISerializable
      * @type {string}
      * @memberof BaseWidget
      */
-    public abstract id: string;
+    public id: string = BaseWidget.generateHTMLId();
     /**
      * indicates if the widget is dragable
      * default: TRUE
@@ -229,10 +230,12 @@ export abstract class BaseWidget implements ISerializable
      *
      * @memberof BaseWidget
      */
-    public _forceUpdate()
+    public _forceGridUpdate()
     {
 
     }
+
+    public componentUpdate() {}
 
     /**
      * Method called after the widget is deserialised. Start loading any dynamic content here.
@@ -240,7 +243,7 @@ export abstract class BaseWidget implements ISerializable
      * @memberof BaseWidget
      */
     public onAfterDeserialisation()
-     {
+    {
 
     }
     /**
@@ -259,5 +262,18 @@ export abstract class BaseWidget implements ISerializable
                 delete this.positionInfoTable[colCount];
             };
         });
+    }
+    
+
+    public static generateHTMLId()
+    {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < 30; i++)
+        {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
     }
 }

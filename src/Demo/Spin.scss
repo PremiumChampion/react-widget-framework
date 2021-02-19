@@ -1,12 +1,5 @@
-.NumberWidget {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.bounce {
+.spin {
     -webkit-animation-name: spin;
     animation-name: spin;
     -webkit-transform-origin: center bottom;

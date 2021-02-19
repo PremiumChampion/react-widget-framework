@@ -7,14 +7,20 @@ import { GridHost } from './CustomGrid/GridHost';
 import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
 import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
 import { ResizeProvider } from './CustomGrid/UseResize';
-import { NumberWidget } from './Demo/NumberWidget';
-import { WeatherWidget } from './Demo/WeatherWidget';
+import { ContactsWidget } from './Demo/ContactsWidget/ContactsWidget';
+import { WeatherWidget } from './Demo/WeatherWidget/WeatherWidget';
 import "./RootStyles.scss";
+import { Custom_Event } from './Demo/CustomEvents';
+import { PrimaryButton, initializeIcons } from 'office-ui-fabric-react';
+import { SettingsWidget } from './Demo/SettingsWidget/SettingsWidget';
+
+initializeIcons();
 
 const root = document.getElementById('root');
 
-WidgetDeserializer.register(WidgetType.NumberWidget, () => { return new NumberWidget(); });
+WidgetDeserializer.register(WidgetType.KontaktWidget, () => { return new ContactsWidget(); });
 WidgetDeserializer.register(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
+WidgetDeserializer.register(WidgetType.SettingsWidget, () => { return new SettingsWidget(); });
 
 let widgets: BaseWidget[] = [];
 let serialise = () => {};
@@ -33,49 +39,64 @@ const render = () =>
             widgets = widgets.filter(_widget => widget.id !== _widget.id);
             render();
           }}
-          onChange={(serialisationFn)=>{
+          onChange={(serialisationFn) =>
+          {
           }}
         />
       </ResizeProvider>
-      <input type={"button"} value="Save" onClick={() =>
-      {
-        let info = serialise();
-        sessionStorage["IPI_Serialisation"] = info;
-      }} ></input>
-      <input type={"button"} value="Load" onClick={() =>
-      {
-        if (!isNil(sessionStorage["IPI_Serialisation"]))
-        {
-          widgets = [];
-          let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["IPI_Serialisation"]);
-          WidgetSerialisations.forEach(WidgetSerialisation =>
-          {
-            widgets.push(WidgetDeserializer.deserialize(WidgetSerialisation));
-          });
-        }
-        else
-        {
-          alert("No save found");
-          widgets = [];
-          for (let i = 0; i < 30; i++)
-          {
-            widgets.push(new NumberWidget());
-          }
-        }
-        render();
-      }} ></input>
-      <input type={"button"} value="New items" onClick={() =>
-      {
-        widgets = [new WeatherWidget()];
-        for (let i = 0; i < 30; i++)
-        {
-          widgets.push(new NumberWidget());
-        }
-        render();
-      }} />
     </div>,
     root
   );
 };
 
-render();
+const loadItems = (tryUseCache: boolean = true) =>
+{
+  if (!isNil(sessionStorage["IPI_Serialisation"]) && tryUseCache)
+  {
+    widgets = [];
+    let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["IPI_Serialisation"]);
+    WidgetSerialisations.forEach(WidgetSerialisation =>
+    {
+      widgets.push(WidgetDeserializer.deserialize(WidgetSerialisation));
+    });
+  }
+  else
+  {
+    widgets = [];
+    
+    widgets.push(new SettingsWidget());
+  }
+  render();
+};
+loadItems();
+
+
+const onAddNewWidget = (Type: WidgetType) =>
+{
+  let widget: BaseWidget | undefined;
+
+  switch (Type)
+  {
+    case WidgetType.KontaktWidget:
+      widget = new ContactsWidget();
+      break;
+    case WidgetType.WeatherWidget:
+      widget = new WeatherWidget();
+      break;
+    case WidgetType.SettingsWidget:
+      widget = new SettingsWidget();
+      break;
+    default:
+      break;
+  }
+
+  if (widget !== undefined)
+  {
+    widgets.push(widget);
+    render();
+  }
+};
+
+Custom_Event.addEventListener("IPI_ADD_WIDGET", onAddNewWidget);
+Custom_Event.addEventListener("IPI_SAVE_WIDGETS", () => sessionStorage["IPI_Serialisation"] = serialise());
+Custom_Event.addEventListener("IPI_LOAD_WIDGETS", loadItems);

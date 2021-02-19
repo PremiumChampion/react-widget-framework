@@ -1,7 +1,6 @@
 import { isNil } from 'lodash';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
-import GridLayout from 'react-grid-layout';
-import { v4 } from 'uuid';
+import GridLayout, { ReactGridLayoutProps } from 'react-grid-layout';
 import "./BaseStyle.scss";
 import { BaseWidget } from './BaseWidget';
 import { CollisionCorrection } from './CollisionCorrection';
@@ -18,8 +17,6 @@ import { ResizeContext } from './UseResize';
  */
 export const GridHost = (props: IGirdHostProps) =>
 {
-    const { widgets } = props;
-
     // creates the widget index
     const generateWidgetIndex = (unindexedWidgets: BaseWidget[], horizontal = true) =>
     {
@@ -95,7 +92,7 @@ export const GridHost = (props: IGirdHostProps) =>
     };
 
     // Apps and Widgets
-    const [_widgets, _setWidgets] = useState(generateWidgetIndex(widgets));
+    const [_widgets, _setWidgets] = useState(generateWidgetIndex(props.widgets));
     // Allow forced rerender
     // const [_update, _forceUpdate] = useState(true);
     // Keeps tract of column size changes
@@ -110,7 +107,7 @@ export const GridHost = (props: IGirdHostProps) =>
     const dimensions = useContext(ResizeContext);
 
     // creates the correct grid layout when the size chages or a widget collision occures
-    const createCorrectLayout = (columnCount: number, boundaryCollission: boolean, widgets?: BaseWidget[]) =>
+    const createCorrectLayout = (columnCount: number, boundaryCollission: boolean, widgets?: BaseWidget[], lastItemId?: string) =>
     {
         widgets = getWidgetsHorizontal(widgets);
 
@@ -130,7 +127,7 @@ export const GridHost = (props: IGirdHostProps) =>
         // add everything to the table
         widgets.forEach(widget =>
         {
-            grid.add(widget.getWidgetPositionInfo(columnCount));
+            grid.add(widget.getWidgetPositionInfo(columnCount), lastItemId === widget.id);
         });
 
         grid.finalise();
@@ -149,18 +146,27 @@ export const GridHost = (props: IGirdHostProps) =>
         if (changes) _forceUpdate();
     };
 
-    // set new widgets if props change
+    // props changed
     useEffect(() =>
     {
-        // sets the first render with new widgets
-        _setInitialRender(true);
-        if (widgets)
+        if (props.widgets && (props.widgets.some(widget => _widgets[widget.id] !== widget) || props.widgets.length !== Object.keys(_widgets).length))
         {
-            createCorrectLayout(_prevColCount, false, widgets);
-            _setWidgets(generateWidgetIndex(widgets));
+            // get the ids of the new wigets
+            const newWidgetIds = props.widgets.map(i => i.id).filter(widgetId => Object.keys(_widgets).indexOf(widgetId) === -1);
+
+            let lastWidgetId: string | undefined;
+
+            if (newWidgetIds.length > 0) lastWidgetId = newWidgetIds[newWidgetIds.length - 1];
+
+            // sets the first render with new widgets
+            _setInitialRender(true);
+            // create the correect grid layout
+            createCorrectLayout(_prevColCount, false, props.widgets, lastWidgetId);
+            // update widgets
+            _setWidgets(generateWidgetIndex(props.widgets));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [widgets]);
+    }, [props]);
 
     // find the lagest widget width
     const dynamicMinWidth = () =>
@@ -206,9 +212,10 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         props.useSerialisation(serialize);
     }
+    const minWidgetWidth = 108;
 
     // calculate the availabe columns
-    let colCount = Math.floor(dimensions.width / 100);
+    let colCount = Math.floor(dimensions.width / minWidgetWidth);
 
     // ensure that the column count is greater or equal to the width of the widest widget
     const minCols = dynamicMinWidth();
@@ -222,15 +229,17 @@ export const GridHost = (props: IGirdHostProps) =>
 
     // set new column count if resized
     if (resized) _setPrevColCount(colCount);
-
     // calculate the min container width
-    let minContainerWidth = colCount * 100;
+    let minParentContainerWidth = colCount * minWidgetWidth;
     let colWidth = Math.floor(dimensions.width / colCount);
 
-    if (minContainerWidth < colWidth) colWidth = minContainerWidth;
+    if (minParentContainerWidth < colWidth) colWidth = minParentContainerWidth;
 
+    // the value of the distance inbetween the widgets
+    const gridMarginValue = 15;
     // calculate the row height
-    const rowHeigth = colWidth * 0.9;
+    const rowHeigth = colWidth * ((minWidgetWidth - gridMarginValue) / minWidgetWidth);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rowCount = Math.floor(dimensions.height / rowHeigth);
 
@@ -253,11 +262,12 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         return Object.values(_widgets).map((item) =>
         {
-            item._forceUpdate = _forceUpdate;
-            // const onRemove = () =>
-            // {
-            //     if (props.onRemoveWidget) (item);
-            // };
+            item._forceGridUpdate = () =>
+            {
+                _forceUpdate();
+            };
+            
+
             return (
                 <div
                     data-grid={item.getGridData()}
@@ -283,7 +293,8 @@ export const GridHost = (props: IGirdHostProps) =>
         }
     };
 
-    const GridLayoutProps = {
+
+    const GridLayoutProps: ReactGridLayoutProps = {
         cols: colCount,
         rowHeight: rowHeigth,
         width: dimensions.width,
@@ -291,17 +302,18 @@ export const GridHost = (props: IGirdHostProps) =>
         draggableHandle: ".IPI-DRAG",
         onLayoutChange: onLayoutChange.bind(undefined, colCount),
         verticalCompact: true,
-        onDrag: renderPlaceholder
+        onDrag: renderPlaceholder,
+        compactType: "horizontal",
+        margin: [gridMarginValue, gridMarginValue]
     };
 
     // First render has finished
     if (_initialRender) _setInitialRender(false);
 
     return (
-        <div key={_updateVersion}>
+        <div key={_updateVersion} style={{ overflow: "hidden" }}>
             <GridLayout
                 {...GridLayoutProps}
-                compactType="horizontal"
             >
                 {renderWidgets()}
             </GridLayout>

@@ -1,5 +1,4 @@
 import { SpaceCollissionType } from './Enums/SpaceCollissionType';
-import { IBoundaryInfo } from './Interfaces/IBoundaryInfo';
 import { IGridPositionInfo } from './Interfaces/IGridPositionInfo';
 import { IItemPositionInfo } from './Interfaces/IPositionInfo';
 import { isNil } from "lodash";
@@ -8,6 +7,8 @@ export class CollisionCorrection
     private _fillInformation: (string | null)[][];
     private _tableColumns: number;
     private _isFinal = false;
+
+    private _lastItem: IItemPositionInfo | undefined;
     private _stackSize = 0;
     /**
      *
@@ -18,7 +19,7 @@ export class CollisionCorrection
         this._fillInformation = [];
     }
 
-    public add(item: IItemPositionInfo, resetStackCounter = true)
+    public add(item: IItemPositionInfo, lastItem: boolean, resetStackCounter = true)
     {
         if (this._isFinal)
         {
@@ -42,7 +43,7 @@ export class CollisionCorrection
                 // Space is filled
                 if (spaceFilled.indexOf(SpaceCollissionType.Right) !== -1 && spaceFilled.indexOf(SpaceCollissionType.Widget) !== -1)
                 {
-                    this.add({ ...item, y: item.y + 1, x: 0 }, false);
+                    this.add({ ...item, y: item.y + 1, x: 0 }, lastItem, false);
                 } else if (spaceFilled.indexOf(SpaceCollissionType.Right) !== -1)
                 {
 
@@ -51,18 +52,18 @@ export class CollisionCorrection
                         this.add({ ...item, x: -1 }, false);
                     } else
                     {
-                        this.add({ ...item, y: item.y + 1, x: 0 }, false);
+                        this.add({ ...item, y: item.y + 1, x: 0 }, lastItem, false);
                     }
 
                 } else if (spaceFilled.indexOf(SpaceCollissionType.Widget) !== -1)
                 {
-                    this.add({ ...item, x: item.x + 1 }, false);
+                    this.add({ ...item, x: item.x + 1 }, lastItem, false);
                 }
             }
             else
             {
                 // Space is free and can be occupied
-                this.fillSpace(item);
+                this.fillSpace(item, lastItem);
             }
         } else
         {
@@ -96,19 +97,25 @@ export class CollisionCorrection
         return collissionTypes;
     }
 
-    private fillSpace(item: IItemPositionInfo)
+    private fillSpace(item: IItemPositionInfo, lastItem: boolean)
     {
-        // occupies  space for an item
-        for (let width = 0; width < item.width; width++)
+        if (!lastItem)
         {
-            for (let height = 0; height < item.heigth; height++)
+            // occupies  space for an item
+            for (let width = 0; width < item.width; width++)
             {
-                if (!this._fillInformation[item.x + width] === undefined)
+                for (let height = 0; height < item.heigth; height++)
                 {
-                    this._fillInformation[item.x + width] = [];
+                    if (!this._fillInformation[item.x + width] === undefined)
+                    {
+                        this._fillInformation[item.x + width] = [];
+                    }
+                    this._fillInformation[item.x + width][item.y + height] = item.id;
                 }
-                this._fillInformation[item.x + width][item.y + height] = item.id;
             }
+        } else
+        {
+            this._lastItem = item;
         }
     }
 
@@ -149,6 +156,13 @@ export class CollisionCorrection
 
     public finalise()
     {
+        // calculate the last item position
+        if (this._lastItem !== undefined)
+        {
+            let y = this._fillInformation[0].length - 1;
+            this.add({ ...this._lastItem, y }, false);
+        }
+
         this._isFinal = true;
     }
 }
