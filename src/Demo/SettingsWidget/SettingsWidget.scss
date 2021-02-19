@@ -16,25 +16,19 @@
     padding: 3px;
 }
 .SettingsHost {
-    // max-width: 400px; 
-    > * {
-        padding-left: 15px;
+    // max-width: 400px;
+    .WidgetSelection{
         display: flex;
-        justify-content: flex-start;
-        &:first-child{
-            padding-top: 15px;
-            padding-right: 15px;
-        }
-        &:last-child{
-            padding-bottom: 15px;
-        }
         >*{
-            margin-right: 15px;
-            &:first-child{
-                margin-left: 15px;
-            }
+            padding: 10px;
         }
-
-        
+    }
+    .SaveOptions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        >*{
+            margin: 5px 10px ;
+        }
     }
 }

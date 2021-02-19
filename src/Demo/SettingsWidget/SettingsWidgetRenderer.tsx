@@ -54,7 +54,7 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                         }}
                     >
                         <div className={"SettingsHost"}>
-                            <div>
+                            <div className={"WidgetSelection"}>
                                 <div key={"ContactInfo"} className={"SettingsEntity"}>
                                     <Icon style={{ fontSize: "40px" }} iconName={"ContactInfo"} onClick={() =>
                                     {
@@ -77,7 +77,7 @@ export default class SettingsWidgetRenderer extends React.Component<SettingsWidg
                                     <p>Settings-Widget</p>
                                 </div> */}
                             </div>
-                            <div>
+                            <div className={"SaveOptions"}>
                                 <PrimaryButton onClick={() => { Custom_Event.fire("IPI_SAVE_WIDGETS", undefined); }}>Widgets speichern</PrimaryButton>
                                 <PrimaryButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", true); }}>Widgets laden</PrimaryButton>
                                 <PrimaryButton onClick={() => { Custom_Event.fire("IPI_LOAD_WIDGETS", false); }}>Neue Widgets generieren</PrimaryButton>

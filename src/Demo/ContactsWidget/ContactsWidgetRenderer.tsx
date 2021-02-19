@@ -53,7 +53,7 @@ export default class ContactsWidgetRenderer extends React.Component<ContactsWidg
                             this.setState({ calloutOpen: false });
                         }}
                     >
-                        <div className={"SettingsHost"}>
+                        <div className={"ContactHost"}>
                             <div>
                                 <TextField value={this.state.contactName} onChange={(_, text) => { this.setState({ contactName: text || "" }); }} />
                                 <DefaultButton onClick={() =>
