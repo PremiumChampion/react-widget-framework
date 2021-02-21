@@ -53,10 +53,10 @@ const render = () =>
 
 const onLoadWidgets = (tryUseCache: boolean = true) =>
 {
-  if (!isNil(sessionStorage["WIDGET_SERILIZATION"]) && tryUseCache)
+  if (!isNil(localStorage["WIDGET_SERILIZATION"]) && tryUseCache)
   {
     widgets = [];
-    let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(sessionStorage["WIDGET_SERILIZATION"]);
+    let WidgetSerialisations: ISerialisationInfo[] = JSON.parse(localStorage["WIDGET_SERILIZATION"]);
     WidgetSerialisations.forEach(WidgetSerialisation =>
     {
       widgets.push(WidgetDeserializer.deserialize(WidgetSerialisation));
@@ -102,7 +102,7 @@ const onAddNewWidget = (Type: WidgetType) =>
 
 const onSaveWidgets = () =>
 {
-  sessionStorage["WIDGET_SERILIZATION"] = serialise();
+  localStorage["WIDGET_SERILIZATION"] = serialise();
 };
 
 Custom_Event.addEventListener("ADD_WIDGET", onAddNewWidget);
