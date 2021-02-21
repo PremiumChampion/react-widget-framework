@@ -1,6 +1,6 @@
 import React from 'react';
-import { BaseWidget } from '../../CustomGrid/BaseWidget';
-import { WidgetType } from '../../CustomGrid/Enums/WidgetType';
+import { BaseWidget } from '../../WidgetFramework/BaseWidget';
+import { WidgetType } from '../../WidgetFramework/Enums/WidgetType';
 import SettingsWidgetRenderer, { SettingsWidgetRendererProps } from './SettingsWidgetRenderer';
 import "../Spin.scss";
 

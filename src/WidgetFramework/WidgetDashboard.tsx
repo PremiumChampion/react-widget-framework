@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useReducer, useState } from 'react';
 import GridLayout, { ReactGridLayoutProps } from 'react-grid-layout';
 import "./BaseStyle.scss";
 import { BaseWidget } from './BaseWidget';
-import { CollisionCorrection } from './CollisionCorrection';
-import { GridItemInternalRenderer } from './GridItemInternalRenderer';
+import { CollisionHandler } from './CollisionHandler';
+import { WidgetInternalRenderer } from './WidgetInternalRenderer';
 import { IGirdHostProps } from './Interfaces/IGirdHostProps';
 import { ISerialisationInfo } from './Serialization/ISerialisationInfo';
 import { ResizeContext } from './UseResize';
@@ -15,7 +15,7 @@ import { ResizeContext } from './UseResize';
  * @param {IGirdHostProps} props
  * @return {*} 
  */
-export const GridHost = (props: IGirdHostProps) =>
+export const WidgetDashboard = (props: IGirdHostProps) =>
 {
     // creates the widget index
     const generateWidgetIndex = (unindexedWidgets: BaseWidget[], horizontal = true) =>
@@ -111,7 +111,7 @@ export const GridHost = (props: IGirdHostProps) =>
     {
         widgets = getWidgetsHorizontal(widgets);
 
-        let grid = new CollisionCorrection(columnCount);
+        let grid = new CollisionHandler(columnCount);
         let changes = false;
         if (!boundaryCollission)
         {
@@ -265,13 +265,14 @@ export const GridHost = (props: IGirdHostProps) =>
                 _forceUpdate();
             };
             
+            // item.remove = 
 
             return (
                 <div
                     data-grid={item.getGridData()}
                     key={item.id}
                 >
-                    <GridItemInternalRenderer
+                    <WidgetInternalRenderer
                         item={item}
                         onRemove={props.onRemoveWidget}
                     />
@@ -280,16 +281,11 @@ export const GridHost = (props: IGirdHostProps) =>
         });
     };
 
-    var _previewSet = false;
-
     // Renders a item placeholder for the dropping zone
     const renderPlaceholder = (layout: GridLayout.Layout[], oldItem: GridLayout.Layout, newItem: GridLayout.Layout, _placeholder: GridLayout.Layout, event: MouseEvent, element: HTMLElement) =>
     {
-        if (!_previewSet)
-        {
             let placeholder = document.querySelector(".react-grid-item.react-grid-placeholder");
-            if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".TS_PREVIEW")?.outerHTML + "");
-        }
+            if (placeholder?.childElementCount === 1) placeholder?.insertAdjacentHTML('afterbegin', element.querySelector(".TS-PREVIEW")?.outerHTML + "");
     };
 
 
@@ -298,7 +294,7 @@ export const GridHost = (props: IGirdHostProps) =>
         rowHeight: rowHeigth,
         width: width,
         isBounded: true,
-        draggableHandle: ".IPI-DRAG",
+        draggableHandle: ".WIDGET-DRAG",
         onLayoutChange: onLayoutChange.bind(undefined, colCount),
         verticalCompact: true,
         onDrag: renderPlaceholder,

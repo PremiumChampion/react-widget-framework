@@ -1,8 +1,8 @@
 import React from 'react';
-import { BaseWidget } from '../../CustomGrid/BaseWidget';
-import { WidgetType } from '../../CustomGrid/Enums/WidgetType';
-import LinkWidgetRenderer, { LinkWidgetRendererProps } from './LinkWidgetRenderer';
+import { BaseWidget } from '../../WidgetFramework/BaseWidget';
+import { WidgetType } from '../../WidgetFramework/Enums/WidgetType';
 import "../Spin.scss";
+import LinkWidgetRenderer, { LinkWidgetRendererProps } from './LinkWidgetRenderer';
 
 
 export class LinkWidget extends BaseWidget

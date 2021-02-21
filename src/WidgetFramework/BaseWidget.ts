@@ -7,12 +7,12 @@ import { ISerializable } from './Serialization/ISerializable';
 export abstract class BaseWidget implements ISerializable
 {
     /**
-     * The ammount of notifications to display in the notification badge.
+     * the version of the widgets for later content migration
      *
-     * @type {number}
+     * @type {string}
      * @memberof BaseWidget
      */
-    public notificationCount: number = 0;
+    public widgetVersion: string = "1.0.0";
 
     /**
      * the type of the widget
@@ -24,30 +24,30 @@ export abstract class BaseWidget implements ISerializable
     public abstract WidgetType: WidgetType;
 
     /**
-     * a classname to apply to the widget when it is dragable
-     *
-     * @type {(string | undefined)}
-     * @memberof BaseWidget
-     */
-    public draggableIndicatorClassName: string = "";
-
-    /**
-     * FOR INTERNAL USE ONLY
-     * keeps track of the saved widgets
-     *
-     * @type {{ [colCount: number]: IItemPositionInfo; }}
-     * @memberof BaseWidget
-     */
-    public positionInfoTable: { [colCount: number]: IGridItemPositionInfo; } = {};
-
-    /**
-     * the id of the widget
+     * The id of the widget use BaseWidget.generateHTMLId() to generate a HTML-Save id.
+     * The id must not start with a number or a error will be thrown.
      *
      * @abstract
      * @type {string}
      * @memberof BaseWidget
      */
     public id: string = BaseWidget.generateHTMLId();
+
+    /**
+     * The ammount of notifications to display in the notification badge.
+     *
+     * @type {number}
+     * @memberof BaseWidget
+     */
+    public notificationCount: number = 0;
+
+    /**
+     * a classname to apply to the widget when it is dragable
+     *
+     * @type {(string | undefined)}
+     * @memberof BaseWidget
+     */
+    public draggableIndicatorClassName: string = "";
 
     /**
      * indicates if the widget is dragable
@@ -78,7 +78,6 @@ export abstract class BaseWidget implements ISerializable
 
     /**
      * indicates if the widget content should be dragable
-     * default: TRUE
      *
      * @memberof BaseWidget
      */
@@ -136,82 +135,6 @@ export abstract class BaseWidget implements ISerializable
     public abstract render(): JSX.Element;
 
     /**
-     * INTERNAL USE ONLY
-     * sets the position of the widget
-     *
-     * @param {IItemPositionInfo} position the new position
-     * @param {number} currentColCount the current colunm width
-     * @memberof BaseWidget
-     */
-    public setPosition(position: IGridItemPositionInfo, currentColCount: number)
-    {
-        if (!this.positionInfoTable[0])
-        {
-            this.positionInfoTable[0] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: false };
-        }
-
-        this.x = position.x;
-        this.y = position.y;
-        this.height = position.heigth;
-        this.width = position.width;
-
-        this.positionInfoTable[currentColCount] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: position.userGenerated };
-    }
-
-    /**
-     * INTERNAL USE ONLY
-     * requests the widget position info for the element
-     *
-     * @param {number} [currentColCount] the current column
-     * @return {*}  {IItemPositionInfo}
-     * @memberof BaseWidget
-     */
-    public getWidgetPositionInfo(currentColCount?: number): IItemPositionInfo
-    {
-        const defaultPosition = !isNil(this.positionInfoTable[0]) ? { ...this.positionInfoTable[0], id: this.id } : { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: false };
-
-        if (currentColCount === undefined)
-        {
-            // default widget position
-            return defaultPosition;
-        } else
-        {
-            if (this.hasPositionInfo(currentColCount))
-            {
-                return { ...this.positionInfoTable[currentColCount], id: this.id };
-            } else
-            {
-                return defaultPosition;
-            }
-        }
-    }
-
-    /**
-     * FOR INTERNAL USE ONLY
-     * requests if the current column has a layout value
-     *
-     * @param {number} currentColCount
-     * @return {*}  {boolean}
-     * @memberof BaseWidget
-     */
-    public hasPositionInfo(currentColCount: number): boolean
-    {
-        return this.positionInfoTable[currentColCount] !== undefined;
-    }
-
-    /**
-     * FOR INTERNAL USE ONLY
-     * requests grid data
-     *
-     * @return {*} 
-     * @memberof BaseWidget
-     */
-    public getGridData()
-    {
-        return { x: this.x, y: this.y, w: this.width, h: this.height, isResizable: this.isResizeable, static: !this.isDraggable, isDraggable: this.isDraggable, isBounded: true };
-    }
-
-    /**
      * function to serialise the widget. it saves all properties for later use. You can override this to implement your own logic for serialising the necesary values.
      *
      * @return {*}  {string}
@@ -238,7 +161,7 @@ export abstract class BaseWidget implements ISerializable
     }
 
     /**
-     * function called when the webpart is removed.
+     * Function called before the webpart is removed.
      * Do any cleanup here
      * 
      * @memberof BaseWidget
@@ -246,6 +169,15 @@ export abstract class BaseWidget implements ISerializable
     public onRemove()
     {
 
+    }
+
+    /**
+     * Function to call when the webpart should be removed
+     *
+     * @memberof BaseWidget
+     */
+    public remove()
+    {
     }
 
     /**
@@ -343,15 +275,15 @@ export abstract class BaseWidget implements ISerializable
     };
 
     /**
-     * generated a html-save id
-     *
-     * @static
-     * @return {*} the html-save id
-     * @memberof BaseWidget
-     */
+    * generated a html-save id
+    *
+    * @static
+    * @return {*} the html-save id
+    * @memberof BaseWidget
+    */
     public static generateHTMLId(length = 30)
     {
-        var result = 'ID_';
+        var result = 'WIDGET_';
 
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var charactersLength = characters.length;
@@ -362,4 +294,90 @@ export abstract class BaseWidget implements ISerializable
         }
         return result;
     }
+
+    /**
+     * FOR INTERNAL USE ONLY
+     * keeps track of the saved widget positions
+     *
+     * @type {{ [colCount: number]: IItemPositionInfo; }}
+     * @memberof BaseWidget
+     */
+    public positionInfoTable: { [colCount: number]: IGridItemPositionInfo; } = {};
+
+    /**
+     * INTERNAL USE ONLY
+     * sets the position of the widget
+     *
+     * @param {IItemPositionInfo} position the new position
+     * @param {number} currentColCount the current colunm width
+     * @memberof BaseWidget
+     */
+    public setPosition(position: IGridItemPositionInfo, currentColCount: number)
+    {
+        if (!this.positionInfoTable[0])
+        {
+            this.positionInfoTable[0] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: false };
+        }
+
+        this.x = position.x;
+        this.y = position.y;
+        this.height = position.heigth;
+        this.width = position.width;
+
+        this.positionInfoTable[currentColCount] = { heigth: this.height, width: this.width, x: this.x, y: this.y, userGenerated: position.userGenerated };
+    }
+
+    /**
+     * INTERNAL USE ONLY
+     * requests the widget position info for the element
+     *
+     * @param {number} [currentColCount] the current column
+     * @return {*}  {IItemPositionInfo}
+     * @memberof BaseWidget
+     */
+    public getWidgetPositionInfo(currentColCount?: number): IItemPositionInfo
+    {
+        const defaultPosition = !isNil(this.positionInfoTable[0]) ? { ...this.positionInfoTable[0], id: this.id } : { heigth: this.height, id: this.id, width: this.width, x: this.x, y: this.y, userGenerated: false };
+
+        if (currentColCount === undefined)
+        {
+            // default widget position
+            return defaultPosition;
+        } else
+        {
+            if (this.hasPositionInfo(currentColCount))
+            {
+                return { ...this.positionInfoTable[currentColCount], id: this.id };
+            } else
+            {
+                return defaultPosition;
+            }
+        }
+    }
+
+    /**
+     * FOR INTERNAL USE ONLY
+     * requests if the current column has a layout value
+     *
+     * @param {number} currentColCount
+     * @return {*}  {boolean}
+     * @memberof BaseWidget
+     */
+    public hasPositionInfo(currentColCount: number): boolean
+    {
+        return this.positionInfoTable[currentColCount] !== undefined;
+    }
+
+    /**
+     * FOR INTERNAL USE ONLY
+     * requests grid data
+     *
+     * @return {*} 
+     * @memberof BaseWidget
+     */
+    public getGridData()
+    {
+        return { x: this.x, y: this.y, w: this.width, h: this.height, isResizable: this.isResizeable, static: !this.isDraggable, isDraggable: this.isDraggable, isBounded: true };
+    }
+
 }

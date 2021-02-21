@@ -99,7 +99,7 @@ export class Custom_Event {
             
             let eventIndex = window["Custom_Events"][eventType].indexOf(eventHandlerReference);
             
-            if (eventIndex != -1) {
+            if (eventIndex !== -1) {
                 window["Custom_Events"][eventType].splice(eventIndex, 1);
             }
             

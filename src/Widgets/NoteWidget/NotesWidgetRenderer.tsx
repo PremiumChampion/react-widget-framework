@@ -1,4 +1,4 @@
-import { Callout, IconButton, DirectionalHint, Icon, Text, TextField } from '@fluentui/react';
+import { Callout, DirectionalHint, IconButton, Text, TextField } from '@fluentui/react';
 import React from "react";
 import { v4 } from 'uuid';
 import "./NotesWidgetStyles.scss";
@@ -37,7 +37,7 @@ export default class NotesWidgetRenderer extends React.Component<NotesWidgetRend
     {
         return (
             <div
-                className="Notes_Icon IPI-NODRAG"
+                className="Notes_Icon WIDGET-NODRAG"
                 onClick={() =>
                 {
                     this.setState({ calloutOpen: true });

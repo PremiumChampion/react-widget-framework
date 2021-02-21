@@ -2,47 +2,47 @@ import { isNil } from 'lodash';
 import { initializeIcons } from 'office-ui-fabric-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BaseWidget } from './CustomGrid/BaseWidget';
-import { WidgetType } from './CustomGrid/Enums/WidgetType';
-import { GridHost } from './CustomGrid/GridHost';
-import { ISerialisationInfo } from './CustomGrid/Serialization/ISerialisationInfo';
-import { WidgetDeserializer } from './CustomGrid/Serialization/WidgetDeserializer';
-import { ResizeProvider } from './CustomGrid/UseResize';
-import { NotesWidget } from './Demo/ContactsWidget/NotesWidget';
-import { Custom_Event } from './Demo/CustomEvents';
-import { LinkWidget } from './Demo/LinkWidget/LinkWidget';
-import { SettingsWidget } from './Demo/SettingsWidget/SettingsWidget';
-import { WeatherWidget } from './Demo/WeatherWidget/WeatherWidget';
 import "./RootStyles.scss";
+import { BaseWidget } from './WidgetFramework/BaseWidget';
+import { WidgetType } from './WidgetFramework/Enums/WidgetType';
+import { WidgetDashboard } from './WidgetFramework/WidgetDashboard';
+import { ISerialisationInfo } from './WidgetFramework/Serialization/ISerialisationInfo';
+import { WidgetDeserializer } from './WidgetFramework/Serialization/WidgetDeserializer';
+import { ResizeProvider } from './WidgetFramework/UseResize';
+import { Custom_Event } from './Widgets/CustomEvents';
+import { LinkWidget } from './Widgets/LinkWidget/LinkWidget';
+import { NotesWidget } from './Widgets/NoteWidget/NotesWidget';
+import { SettingsWidget } from './Widgets/SettingsWidget/SettingsWidget';
+import { WeatherWidget } from './Widgets/WeatherWidget/WeatherWidget';
 
 initializeIcons();
 
 const root = document.getElementById('root');
-
-WidgetDeserializer.register(WidgetType.NotesWidget, () => { return new NotesWidget(); });
-WidgetDeserializer.register(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
-WidgetDeserializer.register(WidgetType.SettingsWidget, () => { return new SettingsWidget(); });
-WidgetDeserializer.register(WidgetType.LinkWidget, () => { return new LinkWidget(); });
-
 let widgets: BaseWidget[] = [];
 let serialise = () => {};
 
+const initializeWidgets = () =>
+{
+  WidgetDeserializer.register(WidgetType.NotesWidget, () => { return new NotesWidget(); });
+  WidgetDeserializer.register(WidgetType.WeatherWidget, () => { return new WeatherWidget(); });
+  WidgetDeserializer.register(WidgetType.SettingsWidget, () => { return new SettingsWidget(); });
+  WidgetDeserializer.register(WidgetType.LinkWidget, () => { return new LinkWidget(); });
+};
+
+initializeWidgets();
 
 const render = () =>
 {
   ReactDOM.render(
     <div>
       <ResizeProvider element={root || document.createElement("div")} >
-        <GridHost
+        <WidgetDashboard
           widgets={widgets}
           useSerialisation={(fn) => serialise = fn}
           onRemoveWidget={(widget) =>
           {
             widgets = widgets.filter(_widget => widget.id !== _widget.id);
             render();
-          }}
-          onChange={(serialisationFn) =>
-          {
           }}
         />
       </ResizeProvider>
@@ -51,7 +51,7 @@ const render = () =>
   );
 };
 
-const loadItems = (tryUseCache: boolean = true) =>
+const onLoadWidgets = (tryUseCache: boolean = true) =>
 {
   if (!isNil(sessionStorage["WIDGET_SERILIZATION"]) && tryUseCache)
   {
@@ -70,8 +70,6 @@ const loadItems = (tryUseCache: boolean = true) =>
   }
   render();
 };
-loadItems();
-
 
 const onAddNewWidget = (Type: WidgetType) =>
 {
@@ -102,6 +100,13 @@ const onAddNewWidget = (Type: WidgetType) =>
   }
 };
 
+const onSaveWidgets = () =>
+{
+  sessionStorage["WIDGET_SERILIZATION"] = serialise();
+};
+
 Custom_Event.addEventListener("ADD_WIDGET", onAddNewWidget);
-Custom_Event.addEventListener("SAVE_WIDGETS", () => sessionStorage["WIDGET_SERILIZATION"] = serialise());
-Custom_Event.addEventListener("LOAD_WIDGETS", loadItems);
+Custom_Event.addEventListener("SAVE_WIDGETS", onSaveWidgets);
+Custom_Event.addEventListener("LOAD_WIDGETS", onLoadWidgets);
+
+onLoadWidgets();

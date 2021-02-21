@@ -1,4 +1,4 @@
-import { Callout, IconButton, DirectionalHint, Icon, Text, TextField, ActionButton } from '@fluentui/react';
+import { ActionButton, Callout, DirectionalHint, Icon, TextField } from '@fluentui/react';
 import React from "react";
 import "./LinkWidgetStyles.scss";
 export interface LinkWidgetRendererProps
@@ -11,9 +11,9 @@ export interface LinkWidgetRendererProps
 interface LinkWidgetRendererState
 {
     calloutOpen: boolean;
-    LinkTitle: string;
-    LinkIcon: string;
-    LinkTaget: string;
+    title: string;
+    icon: string;
+    taget: string;
 }
 /**
  * Component ContactsWidgetRenderer
@@ -29,25 +29,29 @@ export default class LinkWidgetRenderer extends React.Component<LinkWidgetRender
         super(props);
         this.state = {
             calloutOpen: false,
-            LinkTitle: "",
-            LinkIcon: "Link",
-            LinkTaget: ""
+            title: "",
+            icon: "Link",
+            taget: ""
         };
+    }
+
+    private _handleWidgetClick(){
+        if (this.props.link === undefined)
+        {
+            this.setState({ calloutOpen: true });
+        } else
+        {
+            window.location.assign(this.props.link.link)
+        }
     }
 
     public render(): JSX.Element
     {
         return (
             <div
-                className="Link_Icon IPI-NODRAG"
-                onClick={() =>
-                {
-                    this.setState({ calloutOpen: true });
-                }}
-                onTouchStartCapture={() =>
-                {
-                    this.setState({ calloutOpen: true });
-                }}
+                className="Link_Icon WIDGET-NODRAG"
+                onClick={this._handleWidgetClick.bind(this)}
+                onTouchStartCapture={this._handleWidgetClick.bind(this)}
             >
                 {!this.props.link && <Icon iconName={"Link12"} />}
                 {this.state.calloutOpen && this.props.link === undefined &&
@@ -62,15 +66,16 @@ export default class LinkWidgetRenderer extends React.Component<LinkWidgetRender
                     >
                         <div className={"LinkHost"}>
                             <div>
-                                <TextField value={this.state.LinkIcon} onChange={(_, text) => { this.setState({ LinkIcon: text || "" }); }} placeholder={"Fluent-UI-Icon-Name"} />
-                                <TextField value={this.state.LinkTitle} onChange={(_, text) => { this.setState({ LinkTitle: text || "" }); }} placeholder={"Linkbezeichnung"} />
-                                <TextField value={this.state.LinkTaget} onChange={(_, text) => { this.setState({ LinkTaget: text || "" }); }} placeholder={"Ziel z.B. https://google.com"} />
+                                <TextField value={this.state.icon} onChange={(_, text) => { this.setState({ icon: text || "" }); }} placeholder={"Fluent-UI-Icon-Name"} />
+                                <a target={"_blank"} href="https://developer.microsoft.com/de-DE/fluentui#/styles/web/icons#available-icons">{"Verfügbare Icons anzeigen "}<Icon iconName="OpenInNewWindow" /></a>
+                                <TextField value={this.state.title} onChange={(_, text) => { this.setState({ title: text || "" }); }} placeholder={"Linkbezeichnung"} />
+                                <TextField value={this.state.taget} onChange={(_, text) => { this.setState({ taget: text || "" }); }} placeholder={"Ziel z.B. https://google.com"} />
                                 <ActionButton
                                     onClick={() =>
                                     {
-                                        if (this.state.LinkIcon.trim().length > 0 && this.state.LinkTaget.trim().length > 0 && this.state.LinkTitle.trim().length > 0)
+                                        if (this.state.icon.trim().length > 0 && this.state.taget.trim().length > 0 && this.state.title.trim().length > 0)
                                         {
-                                            this.props.setLink({ icon: this.state.LinkIcon, link: this.state.LinkTaget, title: this.state.LinkTitle });
+                                            this.props.setLink({ icon: this.state.icon, link: this.state.taget, title: this.state.title });
                                             this.setState({ calloutOpen: false });
                                         }
                                     }}

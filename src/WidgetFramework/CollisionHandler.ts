@@ -2,7 +2,7 @@ import { SpaceCollissionType } from './Enums/SpaceCollissionType';
 import { IGridPositionInfo } from './Interfaces/IGridPositionInfo';
 import { IItemPositionInfo } from './Interfaces/IPositionInfo';
 import { isNil } from "lodash";
-export class CollisionCorrection
+export class CollisionHandler
 {
     private _fillInformation: (string | null)[][];
     private _tableColumns: number;

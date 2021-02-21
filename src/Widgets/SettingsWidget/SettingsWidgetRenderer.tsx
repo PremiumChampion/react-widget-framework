@@ -1,8 +1,8 @@
 import { Icon, DefaultButton } from '@fluentui/react';
 import { Callout, DirectionalHint } from 'office-ui-fabric-react';
 import React from "react";
-import { WidgetType } from '../../CustomGrid/Enums/WidgetType';
-import { Custom_Event } from './../CustomEvents';
+import { WidgetType } from '../../WidgetFramework/Enums/WidgetType';
+import { Custom_Event } from '../CustomEvents';
 import "./SettingsWidget.scss";
 
 export interface SettingsWidgetRendererProps
