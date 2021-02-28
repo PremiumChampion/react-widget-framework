@@ -1,0 +1,38 @@
+.Settings_Add_Icon {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-image: url(https://cdn.iconscout.com/icon/free/png-256/settings-409-461608.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    // content: "   ";
+}
+
+.SettingsEntity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 3px;
+}
+.SettingsHost {
+    // max-width: 400px;
+    padding: 10px;
+}
+.SettingsHost .WidgetSelection {
+    display: flex;
+}
+.SettingsHost .WidgetSelection > * {
+    padding: 10px;
+}
+.SettingsHost .SaveOptions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.SettingsHost .SaveOptions > * {
+    margin: 5px 10px;
+}
+// }
