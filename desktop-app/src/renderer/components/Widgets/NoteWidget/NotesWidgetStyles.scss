@@ -1,0 +1,48 @@
+.Notes_Icon {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-image: url(https://i.pinimg.com/originals/3e/d8/fc/3ed8fc5f95d96fa06a5407f402efb015.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.NotesEntity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 3px;
+}
+.NotesHost {
+    max-width: 400px;
+
+    > * {
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > *:first-child {
+            padding-right: 5px;
+        }
+        color: black;
+    }
+    > *:first-child {
+        > *:last-child {
+            // background-color: rgba(53, 53, 53, $alpha: 0.1);
+            background-color: #99ff01;
+        }
+    }
+    > *:not(:first-child) {
+        > *:last-child {
+            // background-color: rgba(53, 53, 53, $alpha: 0.1);
+            background-color: #ff5e01;
+        }
+    }
+    [data-icon-name] {
+        color: black;
+    }
+    [data-icon-name="CheckMark"] {
+    }
+}

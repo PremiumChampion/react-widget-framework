@@ -1,0 +1,29 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+html,body{
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+body>div{
+  background-color: rgba(0,0,0,0.4);
+  width: 100%;
+  height: 100%;
+}
+
+.dragregion{
+  -webkit-app-region: drag;
+}
+
+/* body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+} */

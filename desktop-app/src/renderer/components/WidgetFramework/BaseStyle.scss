@@ -1,0 +1,284 @@
+.item {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    cursor: pointer;
+    will-change: transform;
+
+    .item-content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        .card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            // background-color: rgba(255, 255, 255, 0.9);
+            border: 0px solid;
+            color: #333;
+            border-radius: 26px;
+            -webkit-transition: all 0.2s ease-out;
+            -moz-transition: all 0.2s ease-out;
+            -ms-transition: all 0.2s ease-out;
+            -o-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
+            overflow: hidden;
+
+            &:hover .remove {
+                -moz-transform: scale(1);
+                -webkit-transform: scale(1);
+                -o-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1);
+            }
+
+            &:hover .WIDGET-DRAG-HANDLE {
+                -moz-transform: scale(1);
+                -webkit-transform: scale(1);
+                -o-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1);
+            }
+
+            .remove {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+                width: 26px;
+                height: 26px;
+                line-height: 35px;
+                text-align: center;
+                font-size: 23px;
+                font-weight: 400;
+                cursor: pointer;
+                -moz-transform: scale(0);
+                -webkit-transform: scale(0);
+                -o-transform: scale(0);
+                -ms-transform: scale(0);
+                transform: scale(0);
+                -webkit-transition: all 0.15s ease-out;
+                -moz-transition: all 0.15s ease-out;
+                -ms-transition: all 0.15s ease-out;
+                -o-transition: all 0.15s ease-out;
+                transition: all 0.15s ease-out;
+
+                &:hover {
+                    background-color: #dd053b;
+                    color: #fff;
+                    border-radius: 100%;
+                }
+            }
+            .WIDGET-DRAG-HANDLE {
+                position: absolute;
+                right: 5px;
+                top: 35px;
+                width: 26px;
+                height: 26px;
+                line-height: 35px;
+                text-align: center;
+                font-size: 23px;
+                font-weight: 400;
+                cursor: pointer;
+                -moz-transform: scale(0);
+                -webkit-transform: scale(0);
+                -o-transform: scale(0);
+                -ms-transform: scale(0);
+                transform: scale(0);
+                -webkit-transition: all 0.15s ease-out;
+                -moz-transition: all 0.15s ease-out;
+                -ms-transition: all 0.15s ease-out;
+                -o-transition: all 0.15s ease-out;
+                transition: all 0.15s ease-out;
+
+                &:hover {
+                    background-color: #000000;
+                    color: #fff;
+                    border-radius: 100%;
+                }
+            }
+        }
+        & > .WIDGET-NOTIFICATION-BUBBLE {
+            position: relative;
+            left: 100%;
+            top: -12px;
+            width: fit-content;
+            >* {
+                position: relative;
+                left: -50%;
+                height: 24px;
+                min-width: 24px;
+                // text-align: center;
+                font-size: 16px;
+                font-weight: 400;
+                cursor: pointer;
+                background-color: #dd053b;
+                color: #fff;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                align-content: center;
+                padding: 2px;
+                margin: 0;
+                padding: 2px;
+                border: 2px solid white;
+            }
+        }
+    }
+}
+
+@font-face {
+    font-family: "Material Icons";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/materialicons/v29/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2)
+        format("woff2");
+}
+
+.material-icons {
+    font-family: "Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+}
+
+.WIDGET-CONTENT {
+    width: 100%;
+    height: 100%;
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+}
+
+.react-grid-layout {
+    position: relative;
+    transition: height 200ms ease;
+}
+.react-grid-item {
+    transition: all 200ms ease;
+    transition-property: left, top;
+    img {
+        pointer-events: none;
+        user-select: none;
+    }
+    &.cssTransforms {
+        transition-property: transform;
+    }
+    &.resizing {
+        z-index: 1;
+        will-change: width, height;
+    }
+    &.react-draggable-dragging {
+        transition: none;
+        z-index: 3;
+        will-change: transform;
+    }
+    &.dropping {
+        visibility: hidden;
+    }
+    &.react-grid-placeholder {
+        // background: rgb(53, 54, 54);
+        opacity: 0.7;
+        transition-duration: 100ms;
+        z-index: 2;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+        border-radius: 26px;
+    }
+
+    & > .react-resizable-handle {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        &::after {
+            content: "";
+            position: absolute;
+            right: 3px;
+            bottom: 3px;
+            width: 5px;
+            height: 5px;
+            border-right: 2px solid rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+        }
+    }
+
+    & > .react-resizable-handle {
+        &.react-resizable-handle-sw {
+            bottom: 0;
+            left: 0;
+            cursor: sw-resize;
+            transform: rotate(90deg);
+        }
+
+        &.react-resizable-handle-se {
+            bottom: 0;
+            right: 0;
+            cursor: se-resize;
+        }
+
+        &.react-resizable-handle-nw {
+            top: 0;
+            left: 0;
+            cursor: nw-resize;
+            transform: rotate(180deg);
+        }
+
+        &.react-resizable-handle-ne {
+            top: 0;
+            right: 0;
+            cursor: ne-resize;
+            transform: rotate(270deg);
+        }
+
+        &.react-resizable-handle-w {
+            top: 50%;
+            margin-top: -10px;
+            cursor: ew-resize;
+        }
+
+        &.react-resizable-handle-e {
+            top: 50%;
+            margin-top: -10px;
+            cursor: ew-resize;
+        }
+
+        &.react-resizable-handle-n {
+            left: 50%;
+            margin-left: -10px;
+            cursor: ns-resize;
+            top: 0;
+            transform: rotate(225deg);
+        }
+
+        &.react-resizable-handle-s {
+            left: 50%;
+            margin-left: -10px;
+            cursor: ns-resize;
+            bottom: 0;
+            transform: rotate(45deg);
+        }
+    }
+}
+
+.react-resizable-hide {
+    & > .react-resizable-handle {
+        display: none;
+    }
+}
